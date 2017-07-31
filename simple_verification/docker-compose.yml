@@ -1,11 +1,11 @@
-
-version: "3"
+version: "2"
 services:
    blog:
       build: blog
-      ports:
-      - "5000:5000"
+      hostname: blog
+      tty: true
+
    database:
       build: database
-      ports:
-      - "6000:6000"
+      hostname: database
+      tty: true
