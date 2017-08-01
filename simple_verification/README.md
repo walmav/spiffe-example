@@ -7,6 +7,7 @@ Ghostunnel uses [Go SPIFFE library](https://github.com/spiffe/go-spiffe) to pars
 URI SPIFFE value.
 
 ## All in one
+![GitHub Logo](ghostunnel_diagram.png)
 
 How to test:
 
@@ -20,3 +21,5 @@ How to test:
 - Launch a terminal in the blog container, with a netcat command that makes that the standard input is sent to localhost:8003.
 5. The scenario can be cleaned running `make clean`.
 6. A default valid value is provided for the `allow-uri-san` parameter. Different values can be provided to the Ghostunnel server executing: `make run URI=[my custom uri]`.
+
+Note: The `make run` command assumes the existence of the x-terminal-emulator symbolic link to launch new terminals. If this link is not available in your system, replace it with the terminal installed of your preference.
