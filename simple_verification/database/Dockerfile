@@ -14,12 +14,8 @@ RUN apk add --update make
 
 WORKDIR /spiffe/example/verification/database
 
-COPY  nc.sh /
-COPY  ghostunnel_server.sh /
+COPY  nc.sh ghostunnel_server.sh /
 COPY /keys/ /keys/
-
-RUN ["chmod", "+x", "/nc.sh"]
-RUN ["chmod", "+x", "/ghostunnel_server.sh"]
 
 RUN git clone https://github.com/spiffe/ghostunnel.git /go/src/github.com/square/ghostunnel
 RUN go build -o /usr/bin/ghostunnel github.com/square/ghostunnel
