@@ -1,0 +1,11 @@
+version: "2"
+services:
+   blog:
+      build: blog
+      hostname: blog
+      tty: true
+
+   database:
+      build: database
+      hostname: database
+      tty: true
