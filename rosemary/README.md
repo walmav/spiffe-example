@@ -1,6 +1,6 @@
 #  Rosemary Demo
 
-## Setup a totatl of 3 containers.
+## Setup a total of 3 containers.
 
 ### Workload Containers
 Two containers that use [Ghostunnel](https://github.com/spiffe/ghostunnel) to establish a channel between 
