@@ -1,11 +1,16 @@
 version: "2"
 services:
-   blog:
-      build: blog
-      hostname: blog
-      tty: true
+#    blog:
+#       build: blog
+#       hostname: blog
+#       tty: true
 
-   database:
-      build: database
-      hostname: database
+#    database:
+#       build: database
+#       hostname: database
+#       tty: true
+
+   control_plane:
+      build: control_plane
+      hostname: control_plane
       tty: true

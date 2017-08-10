@@ -1,6 +1,6 @@
 FROM golang:alpine
 
-LABEL Description="Simple Verification SPIFFE: Database"
+LABEL Description="Certificate Rotation SPIFFE: Database"
 LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 

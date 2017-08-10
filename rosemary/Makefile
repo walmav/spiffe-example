@@ -1,6 +1,10 @@
 build:
-	make -C blog
-	make -C database
+# TODO: Remove once Control Plane is public
+	rm -rf control_plane/.repos/control_plane || true
+	git clone git@github.com:spiffe/control-plane.git control_plane/.repos/control_plane
+#	make -C blog
+#	make -C database
+	make -C control_plane
 	docker-compose up -d
 
 run:
