@@ -9,7 +9,6 @@ RUN apt-get -y install curl unzip git
 
 #TODO: Clone once the repo is public
 COPY .repos/control_plane /root/go/src/github.com/spiffe/control-plane
-#RUN git clone https://github.com/spiffe/control_plane.git /root/go/src/github.com/spiffe/control-plane
 
 WORKDIR /root/go/src/github.com/spiffe/control-plane
 

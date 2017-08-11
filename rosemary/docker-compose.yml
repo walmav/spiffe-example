@@ -5,10 +5,10 @@ services:
       hostname: blog
       tty: true
 
-#    database:
-#       build: database
-#       hostname: database
-#       tty: true
+   database:
+      build: database
+      hostname: database
+      tty: true
 
    control_plane:
       build: control_plane
