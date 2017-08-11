@@ -1,4 +1,7 @@
 # SPIFFE examples 
  
-### [Simple Verification](https://github.com/spiffe/spiffe-example/blob/master/simple_verification/README.md)
-Full tunnel using SPIFFE certificates.
+### [Simple Verification](simple_verification/README.md)
+This demo shows a Ghostunnel connection validating SPIFFE certificates.
+
+### [Certificate Rotation](rosemary/README.md)
+This demo shows two workloads communicating over Ghostunnel, and Spiffe taking care of the certificate rotation for the encrypted tunnel.
