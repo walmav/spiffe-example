@@ -9,3 +9,8 @@ services:
       build: database
       hostname: database
       tty: true
+
+   control_plane:
+      build: control_plane
+      hostname: control_plane
+      tty: true

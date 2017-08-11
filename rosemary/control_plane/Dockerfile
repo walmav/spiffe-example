@@ -1,6 +1,6 @@
 FROM ubuntu:trusty
 
-LABEL Description="Certificate Rotation SPIFFE: Blog"
+LABEL Description="Certificate Rotation SPIFFE: Control Plane"
 LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
@@ -8,9 +8,9 @@ RUN apt-get update
 RUN apt-get -y install curl unzip git
 
 #TODO: Clone once the repo is public
-COPY .repos/node_agent /root/go/src/github.com/spiffe/node-agent
+COPY .repos/control_plane /root/go/src/github.com/spiffe/control-plane
 
-WORKDIR /root/go/src/github.com/spiffe/node-agent
+WORKDIR /root/go/src/github.com/spiffe/control-plane
 
 RUN ./build.sh setup
 RUN ./build.sh all
