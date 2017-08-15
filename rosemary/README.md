@@ -46,5 +46,16 @@ These are the steps performed by the demo:
 
 ### How to Run
 
-TBD
+These are the steps to run the demo:
 
+1. Clone this repo
+2. Change to 'rosemary/' directory and run 'make'
+- This will build the containers and it usually takes several minutes
+3. Run 'make run'
+- This will open 3 pairs of daemon and daemon CLI consoles (one pair for Control Plane
+and two pairs for the Node Agents)
+4. In the daemon CLI consoles you can run commands against the corresponding daemon
+- The daemon CLI name is 'node\_agent' for Node Agent and 'control\_plane' for Control Plane
+- There are two commands available: 'plugin-info' to list the loaded plugins, and 'stop' to stop the daemon
+- For example, to stop the Control Plane daemon you need to run './control_plane stop'
+5. To stop the containers run 'make clean'

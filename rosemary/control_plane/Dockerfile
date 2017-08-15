@@ -8,13 +8,13 @@ RUN apt-get update
 RUN apt-get -y install curl unzip git
 
 #TODO: Clone once the repo is public
-COPY .repos/control_plane /root/go/src/github.com/spiffe/control-plane
+COPY .repos/sri /root/go/src/github.com/spiffe/sri
 
-ENV PLUGIN_CONFIG_PATH=/root/go/src/github.com/spiffe/control-plane/plugins/.conf
+ENV PLUGIN_CONFIG_PATH=/root/go/src/github.com/spiffe/sri/control_plane/plugins/.conf
 
-WORKDIR /root/go/src/github.com/spiffe/control-plane
+WORKDIR /root/go/src/github.com/spiffe/sri/
 
 RUN ./build.sh setup
 RUN ./build.sh all
 
-WORKDIR /root/go/src/github.com/spiffe/control-plane/control_plane
+WORKDIR /root/go/src/github.com/spiffe/sri/control_plane/
