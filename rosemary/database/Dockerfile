@@ -8,9 +8,13 @@ RUN apt-get update
 RUN apt-get -y install curl unzip git
 
 #TODO: Clone once the repo is public
-COPY .repos/node_agent /root/go/src/github.com/spiffe/node-agent
+COPY .repos/sri /root/go/src/github.com/spiffe/sri
 
-WORKDIR /root/go/src/github.com/spiffe/node-agent
+ENV PLUGIN_CONFIG_PATH=/root/go/src/github.com/spiffe/sri/node_agent/plugins/.conf
+
+WORKDIR /root/go/src/github.com/spiffe/sri/
 
 RUN ./build.sh setup
 RUN ./build.sh all
+
+WORKDIR /root/go/src/github.com/spiffe/sri/node_agent/

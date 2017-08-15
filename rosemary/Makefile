@@ -1,18 +1,20 @@
 build:
 # TODO: Remove once Control Plane and Node Agent are public
-	rm -rf control_plane/.repos/control_plane blog/.repos/node_agent database/.repos/node_agent || true
-	git clone git@github.com:spiffe/control-plane.git control_plane/.repos/control_plane
-	git clone git@github.com:spiffe/node-agent.git blog/.repos/node_agent
-	git clone git@github.com:spiffe/node-agent.git database/.repos/node_agent
+	rm -rf blog/.repos/sri database/.repos/sri control_plane/.repos/sri || true
+	git clone -b ROSEMARY_WIP_DEMO1 git@github.com:spiffe/sri.git blog/.repos/sri
+	git clone -b ROSEMARY_WIP_DEMO1 git@github.com:spiffe/sri.git database/.repos/sri
+	git clone -b ROSEMARY_WIP_DEMO1 git@github.com:spiffe/sri.git control_plane/.repos/sri
 # Build containers
 	docker-compose build
 	docker-compose up -d
 
 run:
-	x-terminal-emulator -e docker-compose exec database /nc.sh
-	x-terminal-emulator -e docker-compose exec database /ghostunnel_server.sh $(URI)
-	x-terminal-emulator -e docker-compose exec blog /ghostunnel_client.sh
-	x-terminal-emulator -e docker-compose exec blog /nc.sh
+	x-terminal-emulator -e docker-compose exec blog ./node_agent server
+	x-terminal-emulator -e docker-compose exec blog bash
+	x-terminal-emulator -e docker-compose exec database ./node_agent server
+	x-terminal-emulator -e docker-compose exec database bash
+	x-terminal-emulator -e docker-compose exec control_plane ./control_plane server
+	x-terminal-emulator -e docker-compose exec control_plane bash
 
 clean:
 	docker-compose down
