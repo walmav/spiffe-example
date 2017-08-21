@@ -24,6 +24,33 @@ One container has a [Control Plane](https://github.com/spiffe/control-plane) wit
 
 ![GitHub Logo](rosemary_release.png)
 
+### Registration Entries
+
+#### Nodes registration entries
+
+There is one entry per node. In both cases there is a single selector of type 'Token', and the parent is the Control Plane.
+
+selectors: Token/TokenBlog  
+spiffe_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog  
+parent_id: spiffe://dev.rexsco.com/spiffe/cp  
+
+selectors: Token/TokenDatabase  
+spiffe_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase  
+parent_id: spiffe://dev.rexsco.com/spiffe/cp  
+
+#### Workloads registration entries
+
+There is also one entry per workload. In both cases there are two selectors: type 'hash' and 'uid', and the parent is its corresponding node.
+
+selectors: hash/hashstring, uid/1001  
+spiffe_id: spiffe://dev.rexsco.com/Blog  
+parent_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog  
+  
+selectors: hash/hashstring, uid/1001  
+spiffe_id: spiffe://dev.rexsco.com/Database  
+parent_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase  
+
+
 ## Details
 
 These are the steps performed by the demo:
@@ -58,4 +85,6 @@ and two pairs for the Node Agents)
 - The daemon CLI name is 'node\_agent' for Node Agent and 'control\_plane' for Control Plane
 - There are two commands available: 'plugin-info' to list the loaded plugins, and 'stop' to stop the daemon
 - For example, to stop the Control Plane daemon you need to run './control_plane stop'
-5. To stop the containers run 'make clean'
+5. In the control plane CLI console you can run the registration process
+- Change to '~/go/bin' and run './registration'
+6. To stop the containers run 'make clean'

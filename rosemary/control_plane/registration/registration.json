@@ -1,0 +1,56 @@
+{
+    "entries": [
+        {
+            "selectors": [
+                {
+                    "type": "Token",
+                    "value": "TokenBlog"
+                }
+            ],
+            "spiffe_id": "spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog",
+            "parent_id": "spiffe://dev.rexsco.com/spiffe/cp",
+            "ttl": 200
+        },
+        {
+            "selectors": [
+                {
+                    "type": "Token",
+                    "value": "TokenDatabase"
+                }
+            ],
+            "spiffe_id": "spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase",
+            "parent_id": "spiffe://dev.rexsco.com/spiffe/cp",
+            "ttl": 200
+        },
+        {
+            "selectors": [
+                {
+                    "type": "hash",
+                    "value": "hashstring"
+                },
+                {
+                    "type": "uid",
+                    "value": "1001"
+                }
+            ],
+            "spiffe_id": "spiffe://dev.rexsco.com/Blog",
+            "parent_id": "spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog",
+            "ttl": 200
+        },
+        {
+            "selectors": [
+                {
+                    "type": "hash",
+                    "value": "hashstring"
+                },
+                {
+                    "type": "uid",
+                    "value": "1001"
+                }
+            ],
+            "spiffe_id": "spiffe://dev.rexsco.com/Database",
+            "parent_id": "spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase",
+            "ttl": 200
+        }
+    ]
+}
