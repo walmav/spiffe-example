@@ -1,11 +1,11 @@
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 
 LABEL Description="Certificate Rotation SPIFFE: Control Plane"
 LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
 RUN apt-get update
-RUN apt-get -y install curl unzip git
+RUN apt-get -y install curl unzip git build-essential
 
 #TODO: Clone once the repo is public
 COPY .repos/sri /root/go/src/github.com/spiffe/sri
@@ -16,5 +16,7 @@ WORKDIR /root/go/src/github.com/spiffe/sri/
 
 RUN ./build.sh setup
 RUN ./build.sh all
+
+COPY registration/registration registration/registration.json /root/go/bin/
 
 WORKDIR /root/go/src/github.com/spiffe/sri/control_plane/
