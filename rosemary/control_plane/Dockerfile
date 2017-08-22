@@ -17,6 +17,6 @@ WORKDIR /root/go/src/github.com/spiffe/sri/
 RUN ./build.sh setup
 RUN ./build.sh all
 
-COPY registration/registration registration/registration.json /root/go/bin/
+# COPY registration/registration registration/registration.json /root/go/bin/
 
 WORKDIR /root/go/src/github.com/spiffe/sri/control_plane/

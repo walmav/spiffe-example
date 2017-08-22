@@ -30,6 +30,7 @@ One container has a [Control Plane](https://github.com/spiffe/control-plane) wit
 
 There is one entry per node. In both cases there is a single selector of type 'Token', and the parent is the Control Plane.
 
+```bash 
 selectors: Token/TokenBlog  
 spiffe_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog  
 parent_id: spiffe://dev.rexsco.com/spiffe/cp  
@@ -37,6 +38,7 @@ parent_id: spiffe://dev.rexsco.com/spiffe/cp
 selectors: Token/TokenDatabase  
 spiffe_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase  
 parent_id: spiffe://dev.rexsco.com/spiffe/cp  
+```
 
 #### Workloads registration entries
 
@@ -78,7 +80,7 @@ These are the steps to run the demo:
 1. Clone this repo
 2. Change to 'rosemary/' directory and run 'make'
 - This will build the containers and it usually takes several minutes
-3. Run 'make run'
+3. Run 'make demo'
 - This will open 3 pairs of daemon and daemon CLI consoles (one pair for Control Plane
 and two pairs for the Node Agents)
 4. In the daemon CLI consoles you can run commands against the corresponding daemon
