@@ -30,27 +30,23 @@ One container has a [Control Plane](https://github.com/spiffe/control-plane) wit
 
 There is one entry per node. In both cases there is a single selector of type 'Token', and the parent is the Control Plane.
 
-```bash 
-selectors: Token/TokenBlog  
-spiffe_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog  
-parent_id: spiffe://dev.rexsco.com/spiffe/cp  
+| Selectors | SPIFFE ID | PARENT ID |
+| :------ | :----- | :----------- |
+| Token/TokenBlog  |  spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog | spiffe://dev.rexsco.com/spiffe/cp |  
+| Token/TokenDatabase | spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase | spiffe://dev.rexsco.com/spiffe/cp |  
 
-selectors: Token/TokenDatabase  
-spiffe_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase  
-parent_id: spiffe://dev.rexsco.com/spiffe/cp  
-```
 
 #### Workloads registration entries
 
 There is also one entry per workload. In both cases there are two selectors: type 'hash' and 'uid', and the parent is its corresponding node.
 
-selectors: hash/hashstring, uid/1001  
-spiffe_id: spiffe://dev.rexsco.com/Blog  
-parent_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog  
-  
-selectors: hash/hashstring, uid/1001  
-spiffe_id: spiffe://dev.rexsco.com/Database  
-parent_id: spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase  
+
+
+
+| Selectors | SPIFFE ID | PARENT ID |
+| :------ | :----- | :----------- |
+| hash/hashstring, uid/1001  | spiffe://dev.rexsco.com/Blog  | spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog |  
+| hash/hashstring, uid/1001  | spiffe://dev.rexsco.com/Database   | spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase |  
 
 
 ## Details
