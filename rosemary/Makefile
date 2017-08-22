@@ -4,7 +4,6 @@ build:
 	git clone -b ROSEMARY_WIP_DEMO2 git@github.com:spiffe/sri.git blog/.repos/sri
 	git clone -b ROSEMARY_WIP_DEMO2 git@github.com:spiffe/sri.git database/.repos/sri
 	git clone -b ROSEMARY_WIP_DEMO2 git@github.com:spiffe/sri.git control_plane/.repos/sri
-	go build -o control_plane/registration/registration github.com/spiffe/spiffe-example/rosemary/control_plane/registration
 # Build containers
 	docker-compose build
 	docker-compose up -d
@@ -16,6 +15,9 @@ run:
 	x-terminal-emulator -e docker-compose exec database bash
 	x-terminal-emulator -e docker-compose exec control_plane ./control_plane server
 	x-terminal-emulator -e docker-compose exec control_plane bash
+
+demo:
+	docker-compose exec harness bash
 
 clean:
 	docker-compose down

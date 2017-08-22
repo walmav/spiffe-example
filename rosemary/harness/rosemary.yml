@@ -1,0 +1,20 @@
+# /root/.tmuxinator/rosemary.yml
+
+name: rosemary
+root: /home/rosemary
+tmux_options: -f /root/.tmuxinator/.tmux.conf
+
+windows:
+  - spiffe_demo:
+      pre:
+        - echo "RUN before each pane."
+        -
+      panes:
+        - docker-compose exec blog bash
+        - docker-compose exec blog ./node_agent server
+        - docker-compose exec database bash
+        - docker-compose exec database ./node_agent server
+        - docker-compose exec control_plane bash
+        - docker-compose exec control_plane ./control_plane server
+        - echo "MAIN"
+
