@@ -31,7 +31,7 @@ One container has a [Control Plane](https://github.com/spiffe/control-plane) wit
 There is one entry per node. In both cases there is a single selector of type 'Token', and the parent is the Control Plane.
 
 | Selectors | SPIFFE ID | PARENT ID |
-| :--------: | :--------: | :--------: |
+| :------ | :----- | :----------- |
 | Token/TokenBlog  |  spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog | spiffe://dev.rexsco.com/spiffe/cp |  
 | Token/TokenDatabase | spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase | spiffe://dev.rexsco.com/spiffe/cp |  
 
@@ -44,7 +44,7 @@ There is also one entry per workload. In both cases there are two selectors: typ
 
 
 | Selectors | SPIFFE ID | PARENT ID |
-| :--------: | :--------: | :--------: |
+| :------ | :----- | :----------- |
 | hash/hashstring, uid/1001  | spiffe://dev.rexsco.com/Blog  | spiffe://dev.rexsco.com/spiffe/node-id/TokenBlog |  
 | hash/hashstring, uid/1001  | spiffe://dev.rexsco.com/Database   | spiffe://dev.rexsco.com/spiffe/node-id/TokenDatabase |  
 
