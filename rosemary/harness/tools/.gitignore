@@ -1,0 +1,7 @@
+.idea
+.venv
+.repos
+.artifacts
+.cache
+.build
+/vendor

@@ -20,7 +20,8 @@ RUN apt-get install -y \
     python-dev \
     python-distribute \
     python-pip \
-    curl
+    curl \
+    unzip
 RUN rm -rf /var/lib/apt/lists/*
 
 # Map DockerCompose directory for service
@@ -41,7 +42,16 @@ WORKDIr /root
 RUN git clone https://github.com/gpakosz/.tmux.git
 RUN ln -s -f .tmux/.tmux.conf
 
-WORKDIR /home/rosemary
+# Build tools
+COPY tools/ /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/
+WORKDIR /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools
+RUN ./build.sh setup
+RUN ./build.sh deps
+COPY .repos/sri /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/vendor/github.com/spiffe/sri
+RUN ./build.sh binaries
+RUN ./build.sh test
+
+#WORKDIR /home/rosemary
 
 # ENTRYPOINT ["tmuxinator"]
 # CMD ["start", "env"]
