@@ -33,7 +33,11 @@ ENV EDITOR "emacs"
 
 # Inject development configuration
 COPY rosemary.yml /root/.tmuxinator/rosemary.yml
-COPY .tmux.conf  /root/.tmuxinator/.tmux.conf
+COPY .tmux.conf.local  /root/.tmux.conf.local
+
+WORKDIr /root
+RUN git clone https://github.com/gpakosz/.tmux.git
+RUN ln -s -f .tmux/.tmux.conf
 
 WORKDIR /home/rosemary
 

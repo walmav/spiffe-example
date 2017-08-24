@@ -4,9 +4,10 @@
 
 https://github.com/tmuxinator/tmuxinator
 
+Using the Themes for Tmuxinator
+ 
+ 
+https://github.com/gpakosz/.tmux
 
-```bash
 
-docker run -it -v /var/run/docker.sock:/var/run/docker.sock
 
-```
