@@ -1,8 +1,25 @@
 build:
-# TODO: Remove once Control Plane and Node Agent are public
-	rm -rf harness/.repos/ .artifact/ || true
-	git clone git@github.com:spiffe/sri.git harness/.repos/sri
+	rm -rf \
+		harness/.repos/ \
+		control_plane/.conf/ \
+		control_plane/.pconf/ \
+		blog/.pconf/ \
+		database/.pconf/ \
+		.artifact/ \
+		|| true
+# Create dirs
 	mkdir .artifact
+	mkdir control_plane/.conf/
+	mkdir control_plane/.pconf/
+	mkdir blog/.pconf/
+	mkdir database/.pconf/
+# TODO: Remove once Control Plane and Node Agent are public
+	git clone git@github.com:spiffe/sri.git harness/.repos/sri
+# Copy configs
+	cp harness/.repos/sri/control_plane/.conf/* control_plane/.conf/
+	cp harness/.repos/sri/control_plane/plugins/.conf/* control_plane/.pconf/
+	cp harness/.repos/sri/node_agent/plugins/.conf/* blog/.pconf/
+	cp harness/.repos/sri/node_agent/plugins/.conf/* database/.pconf/
 # Build containers
 	docker-compose build
 	docker-compose up -d

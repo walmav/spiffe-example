@@ -5,7 +5,7 @@ LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
 
-COPY default_cp_config.hcl /control_plane/.conf/
-COPY ds_sqlite.hcl /control_plane/plugin-conf/
-ENV PLUGIN_CONFIG_PATH=/control_plane/plugin-conf/
+COPY .conf/ /control_plane/.conf/
+COPY .pconf/ /control_plane/.pconf/
+ENV PLUGIN_CONFIG_PATH=/control_plane/.pconf/
 WORKDIR /control_plane/

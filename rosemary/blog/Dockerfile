@@ -5,6 +5,6 @@ LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
 
-COPY wla_secret_file.hcl /node_agent/plugin-conf/
-ENV PLUGIN_CONFIG_PATH=/node_agent/plugin-conf/
+COPY .pconf/ /node_agent/.pconf/
+ENV PLUGIN_CONFIG_PATH=/node_agent/.pconf/
 WORKDIR /node_agent/
