@@ -77,12 +77,13 @@ These are the steps to run the demo:
 2. Change to 'rosemary/' directory and run 'make'
 - This will build the containers and it usually takes several minutes
 3. Run 'make demo'
-- This will open 3 pairs of daemon and daemon CLI consoles (one pair for Control Plane
-and two pairs for the Node Agents)
+- This will open tmuxinator with 7 panes: 3 pairs of daemon and daemon CLI panes (one pair for Control Plane
+and two pairs for the Node Agents) and one pane for the main console (aka harness)
 4. In the daemon CLI consoles you can run commands against the corresponding daemon
 - The daemon CLI name is 'node\_agent' for Node Agent and 'control\_plane' for Control Plane
 - There are two commands available: 'plugin-info' to list the loaded plugins, and 'stop' to stop the daemon
 - For example, to stop the Control Plane daemon you need to run './control_plane stop'
-5. In the control plane CLI console you can run the registration process
-- Change to '~/go/bin' and run './registration'
-6. To stop the containers run 'make clean'
+5. In the main/harness console you can run the registration process
+- Change to '/root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/registration/' and run './registration'
+6. To exit tmuxinator press 'Ctrl+B' then '&' and confirm with 'Y'
+7. To stop the containers run 'make clean'

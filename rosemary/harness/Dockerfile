@@ -11,21 +11,24 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # Install basics
-RUN apt-get update && apt-get install -y \
+RUN apt-get update -y
+RUN apt-get install -y \
     tmux \
     emacs \
     git \
- && rm -rf /var/lib/apt/lists/*
+    python \
+    python-dev \
+    python-distribute \
+    python-pip \
+    curl \
+    unzip
+RUN rm -rf /var/lib/apt/lists/*
 
 # Map DockerCompose directory for service
 
-# Install Python for docker-compose
+# Install docker-compose
 # TODO: See if we can mount the binary from the Base OS
-RUN apt-get install -y python
-RUN apt-get update -y
-RUN apt-get install -y python-dev python-distribute python-pip
-RUN apt-get install -y curl
-RUN curl -sSL https://get.docker.com/ | sh && pip install docker-compose
+RUN pip install docker-compose
 
 # Install Gems
 RUN gem install tmuxinator
@@ -38,6 +41,17 @@ COPY .tmux.conf.local  /root/.tmux.conf.local
 WORKDIr /root
 RUN git clone https://github.com/gpakosz/.tmux.git
 RUN ln -s -f .tmux/.tmux.conf
+
+# Build SRI
+COPY .repos/sri /root/go/src/github.com/spiffe/sri
+WORKDIR /root/go/src/github.com/spiffe/sri/
+RUN ./build.sh all
+RUN ./build.sh artifact
+
+# Build tools
+COPY tools/ /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/
+WORKDIR /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools
+RUN ./build.sh all
 
 WORKDIR /home/rosemary
 
