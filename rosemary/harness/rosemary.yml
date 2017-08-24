@@ -2,10 +2,10 @@
 
 name: rosemary
 root: /home/rosemary
-tmux_options: -f /root/.tmuxinator/.tmux.conf
 
 windows:
-  - spiffe_demo:
+  - demo:
+      layout: cfa4,205x60,0,0[205x15,0,0{99x15,0,0,0,105x15,100,0,4},205x14,0,16{99x14,0,16,2,105x14,100,16,3},205x14,0,31{99x14,0,31,1,105x14,100,31,6},205x14,0,46,5]
       pre:
         - echo "RUN before each pane."
         -

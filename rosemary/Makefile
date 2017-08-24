@@ -8,14 +8,6 @@ build:
 	docker-compose build
 	docker-compose up -d
 
-run:
-	x-terminal-emulator -e docker-compose exec blog ./node_agent server
-	x-terminal-emulator -e docker-compose exec blog bash
-	x-terminal-emulator -e docker-compose exec database ./node_agent server
-	x-terminal-emulator -e docker-compose exec database bash
-	x-terminal-emulator -e docker-compose exec control_plane ./control_plane server
-	x-terminal-emulator -e docker-compose exec control_plane bash
-
 demo:
 	docker-compose exec harness bash
 
