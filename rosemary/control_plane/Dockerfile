@@ -4,19 +4,8 @@ LABEL Description="Certificate Rotation SPIFFE: Control Plane"
 LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
-RUN apt-get update
-RUN apt-get -y install curl unzip git build-essential
 
-#TODO: Clone once the repo is public
-COPY .repos/sri /root/go/src/github.com/spiffe/sri
-
-ENV PLUGIN_CONFIG_PATH=/root/go/src/github.com/spiffe/sri/control_plane/plugins/.conf
-
-WORKDIR /root/go/src/github.com/spiffe/sri/
-
-RUN ./build.sh setup
-RUN ./build.sh all
-
-# COPY registration/registration registration/registration.json /root/go/bin/
-
-WORKDIR /root/go/src/github.com/spiffe/sri/control_plane/
+COPY default_cp_config.hcl /control_plane/.conf/
+COPY ds_sqlite.hcl /control_plane/plugin-conf/
+ENV PLUGIN_CONFIG_PATH=/control_plane/plugin-conf/
+WORKDIR /control_plane/

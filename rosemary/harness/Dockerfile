@@ -42,16 +42,18 @@ WORKDIr /root
 RUN git clone https://github.com/gpakosz/.tmux.git
 RUN ln -s -f .tmux/.tmux.conf
 
+# Build SRI
+COPY .repos/sri /root/go/src/github.com/spiffe/sri
+WORKDIR /root/go/src/github.com/spiffe/sri/
+RUN ./build.sh all
+RUN ./build.sh artifact
+
 # Build tools
 COPY tools/ /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/
 WORKDIR /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools
-RUN ./build.sh setup
-RUN ./build.sh deps
-COPY .repos/sri /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/vendor/github.com/spiffe/sri
-RUN ./build.sh binaries
-RUN ./build.sh test
+RUN ./build.sh all
 
-#WORKDIR /home/rosemary
+WORKDIR /home/rosemary
 
 # ENTRYPOINT ["tmuxinator"]
 # CMD ["start", "env"]

@@ -17,15 +17,21 @@ services:
       build: blog
       hostname: blog
       tty: true
+      volumes:
+        - .:/home/rosemary
 
    database:
       container_name: database
       build: database
       hostname: database
       tty: true
+      volumes:
+        - .:/home/rosemary
 
    control_plane:
       container_name: control_plane
       build: control_plane
       hostname: control_plane
       tty: true
+      volumes:
+        - .:/home/rosemary
