@@ -8,17 +8,18 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/spiffe/sri/control_plane/api/registration/proto"
+	"github.com/spiffe/sri/pkg/api/registration"
+	"github.com/spiffe/sri/pkg/common"
 )
 
 const (
-	entryURL = "http://control_plane:8080/entry"
+	entryURL = "http://spire:8080/entry"
 	dataFile = "registration.json"
 )
 
 func main() {
 	// Load entries from data file
-	entries := &control_plane_proto.RegisteredEntries{}
+	entries := &common.RegistrationEntries{}
 	dat, err := ioutil.ReadFile(dataFile)
 	if err != nil {
 		panic(err)
@@ -48,7 +49,7 @@ func main() {
 	fmt.Printf("All OK!\n")
 }
 
-func createEntry(registeredEntry *control_plane_proto.RegisteredEntry) (entityID string, err error) {
+func createEntry(registeredEntry *common.RegistrationEntry) (entityID string, err error) {
 	reqStr, err := json.Marshal(registeredEntry)
 	if err != nil {
 		return
@@ -74,7 +75,7 @@ func createEntry(registeredEntry *control_plane_proto.RegisteredEntry) (entityID
 	}
 	fmt.Printf("CreateEntry returned: %s\n\n", string(respStr))
 
-	registeredEntryID := &control_plane_proto.RegisteredEntryID{}
+	registeredEntryID := &registration.RegistrationEntryID{}
 	err = json.Unmarshal([]byte(respStr), &registeredEntryID)
 	if err != nil {
 		return
@@ -84,7 +85,7 @@ func createEntry(registeredEntry *control_plane_proto.RegisteredEntry) (entityID
 	return
 }
 
-func validateEntry(entityID string, registeredEntry *control_plane_proto.RegisteredEntry) (ok bool, err error) {
+func validateEntry(entityID string, registeredEntry *common.RegistrationEntry) (ok bool, err error) {
 	fmt.Printf("Invoking FetchEntry: %s\n\n", entityID)
 
 	req, err := http.NewRequest("GET", entryURL+"/"+entityID, bytes.NewBufferString(""))
@@ -106,7 +107,7 @@ func validateEntry(entityID string, registeredEntry *control_plane_proto.Registe
 	}
 	fmt.Printf("FetchEntry returned: %s\n\n", string(respStr))
 
-	var fetchedRegisteredEntry *control_plane_proto.RegisteredEntry
+	var fetchedRegisteredEntry *common.RegistrationEntry
 	err = json.Unmarshal([]byte(respStr), &fetchedRegisteredEntry)
 	if err != nil {
 		return
