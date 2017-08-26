@@ -28,10 +28,10 @@ services:
       volumes:
         - .:/home/rosemary
 
-   control_plane:
-      container_name: control_plane
-      build: control_plane
-      hostname: control_plane
+   spire:
+      container_name: spire
+      build: spire
+      hostname: spire
       tty: true
       volumes:
         - .:/home/rosemary
