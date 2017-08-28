@@ -1,5 +1,7 @@
 .artifact
 blog/.pconf
+blog/.conf
 database/.pconf
+database/.conf
 spire/.pconf
 spire/.conf

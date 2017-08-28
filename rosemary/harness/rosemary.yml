@@ -11,10 +11,10 @@ windows:
         -
       panes:
         - docker-compose exec blog bash
-        - docker-compose exec blog ./spire-agent server
+        - docker-compose exec blog ./spire-agent start
         - docker-compose exec database bash
-        - docker-compose exec database ./spire-agent server
+        - docker-compose exec database ./spire-agent start
         - docker-compose exec spire bash
-        - docker-compose exec spire ./spire-server server
+        - docker-compose exec spire ./spire-server start
         - echo "MAIN"
 
