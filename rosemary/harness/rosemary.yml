@@ -6,15 +6,12 @@ root: /home/rosemary
 windows:
   - demo:
       layout: cfa4,205x60,0,0[205x15,0,0{99x15,0,0,0,105x15,100,0,4},205x14,0,16{99x14,0,16,2,105x14,100,16,3},205x14,0,31{99x14,0,31,1,105x14,100,31,6},205x14,0,46,5]
-      pre:
-        - echo "RUN before each pane."
-        -
       panes:
         - docker-compose exec blog bash
-        - docker-compose exec blog ./spire-agent server
+        - docker-compose exec blog tail -f spire-agent.log
         - docker-compose exec database bash
-        - docker-compose exec database ./spire-agent server
+        - docker-compose exec database tail -f spire-agent.log
         - docker-compose exec spire bash
-        - docker-compose exec spire ./spire-server server
+        - docker-compose exec spire tail -f spire-server.log
         - echo "MAIN"
 

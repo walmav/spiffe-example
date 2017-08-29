@@ -1,5 +1,10 @@
-.artifact
-blog/.pconf
-database/.pconf
-spire/.pconf
-spire/.conf
+artifact/*
+artifact.tgz
+harness/registration
+build/repos
+blog/pconf/
+blog/conf/
+database/pconf/
+database/conf/
+spire/pconf/
+spire/conf/

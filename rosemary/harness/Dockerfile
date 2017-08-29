@@ -37,23 +37,9 @@ ENV EDITOR "emacs"
 # Inject development configuration
 COPY rosemary.yml /root/.tmuxinator/rosemary.yml
 COPY .tmux.conf.local  /root/.tmux.conf.local
+COPY registration /root/
 
-WORKDIr /root
+WORKDIR /root
 RUN git clone https://github.com/gpakosz/.tmux.git
 RUN ln -s -f .tmux/.tmux.conf
 
-# Build SRI
-COPY .repos/sri /root/go/src/github.com/spiffe/sri
-WORKDIR /root/go/src/github.com/spiffe/sri/
-RUN ./build.sh all
-RUN ./build.sh artifact
-
-# Build tools
-COPY tools/ /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/
-WORKDIR /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools
-RUN ./build.sh all
-
-WORKDIR /home/rosemary
-
-# ENTRYPOINT ["tmuxinator"]
-# CMD ["start", "env"]
