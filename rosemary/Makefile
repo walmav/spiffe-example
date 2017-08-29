@@ -1,9 +1,9 @@
-all: setup artifact services demo
+all: setup artifact services
 
 setup:
 # Clean up dirs
 	rm -rf \
-		harness/repos/ \
+		build/repos/ \
 		spire/conf/ \
 		spire/pconf/ \
 		blog/conf/ \
