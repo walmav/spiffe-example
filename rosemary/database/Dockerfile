@@ -4,8 +4,11 @@ LABEL Description="Certificate Rotation SPIFFE: Database"
 LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
-
-COPY .conf/ /cmd/spire-agent/.conf/
-COPY .pconf/ /cmd/spire-agent/.pconf/
-ENV SPIRE_PLUGIN_CONFIG_DIR=/cmd/spire-agent/.pconf/
+COPY conf /conf
+COPY pconf /pconf
+COPY artifact.tgz /
+RUN tar --directory / -xvzf /artifact.tgz
+ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
+ENV SPIRE_AGENT_CONFIG_PATH=/conf/default_agent_config.hcl
 WORKDIR /cmd/spire-agent/
+CMD ./spire-agent start
