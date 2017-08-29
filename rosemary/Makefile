@@ -36,7 +36,7 @@ setup:
 artifact:
 	docker-compose build build
 
-	docker-compose start build
+	docker-compose up -d build
 	docker-compose exec build cp /root/go/src/github.com/spiffe/sri/artifact.tgz /home/rosemary/artifact/
 	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/registration/registration /home/rosemary/artifact/
 	docker-compose stop build
