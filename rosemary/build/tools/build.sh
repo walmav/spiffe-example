@@ -3,7 +3,7 @@
 set -o errexit
 [[ -n $DEBUG ]] && set -o xtrace
 
-declare -r BINARY_DIRS="registration $(find */plugins/*/* -maxdepth 1 -type d -not -name 'proto' -not -name '_*')"
+declare -r BINARY_DIRS="registration sidecar $(find */plugins/*/* -maxdepth 1 -type d -not -name 'proto' -not -name '_*')"
 declare -r PROTO_FILES="$(find */plugins */api -name '*.proto')"
 
 declare -r GO_VERSION=${GO_VERSION:-1.8.3}
