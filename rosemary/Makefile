@@ -38,7 +38,9 @@ artifact:
 
 	docker-compose up -d build
 	docker-compose exec build cp /root/go/src/github.com/spiffe/sri/artifact.tgz /home/rosemary/artifact/
-	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/registration/registration /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration.json /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/sidecar /home/rosemary/artifact/
 	docker-compose stop build
 
 	cp artifact/artifact.tgz spire/
@@ -52,6 +54,8 @@ services:
 
 demo:
 	docker-compose up -d blog database spire harness
+	docker-compose exec blog cp /home/rosemary/artifact/sidecar /sidecar/sidecar
+	docker-compose exec database cp /home/rosemary/artifact/sidecar /sidecar/sidecar
 	docker-compose exec harness cp /home/rosemary/harness/rosemary.yml /root/.tmuxinator/rosemary.yml
 	docker-compose exec harness tmuxinator rosemary
 	docker-compose stop harness

@@ -7,6 +7,7 @@ LABEL version="0.1.0"
 COPY conf /conf
 COPY pconf /pconf
 COPY artifact.tgz /
+COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifact.tgz
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
 ENV SPIRE_AGENT_CONFIG_PATH=/conf/default_agent_config.hcl

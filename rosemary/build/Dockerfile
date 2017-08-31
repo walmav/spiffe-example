@@ -14,7 +14,7 @@ RUN ./build.sh all
 RUN ./build.sh artifact
 
 # Build tools
-COPY tools/ /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/
-WORKDIR /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools
+COPY tools/ /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/
+WORKDIR /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools
 RUN ./build.sh all
 
