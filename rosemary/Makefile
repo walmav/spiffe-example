@@ -1,10 +1,12 @@
+SHELL=/bin/bash
+
 all: checkout build-artifact build-services
 
 checkout:
 	rm -rf build/repos
 	mkdir build/repos
 	git clone git@github.com:spiffe/sri.git build/repos/sri
-#	git -C build/repos/sri checkout workload_api_refactor
+	git -C build/repos/sri reset --hard d6ba69e93fe5eb62d1ceb4f57b026bb9c39aabf5 # This demo works with this sri version
 
 build-artifact:
 	rm -rf artifact
