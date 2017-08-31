@@ -10,11 +10,19 @@ RUN apt-get install -y git curl unzip build-essential
 # Build SRI
 COPY repos/sri /root/go/src/github.com/spiffe/sri
 WORKDIR /root/go/src/github.com/spiffe/sri/
-RUN ./build.sh all
+RUN ./build.sh setup
+RUN ./build.sh deps
+RUN ./build.sh binaries
 RUN ./build.sh artifact
 
 # Build tools
 COPY tools/ /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools/
 WORKDIR /root/go/src/github.com/spiffe/spiffe-example/rosemary/harness/tools
 RUN ./build.sh all
+
+# Build ghosttunnel
+ENV GOPATH=/root/go
+ENV GOROOT=/root/go/src/github.com/spiffe/sri/.build/golang-1.8.3
+ENV PATH=${GOROOT}/bin:${PATH}
+RUN go get -v github.com/spiffe/ghostunnel
 

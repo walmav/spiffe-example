@@ -38,6 +38,7 @@ ENV EDITOR "emacs"
 COPY rosemary.yml /root/.tmuxinator/rosemary.yml
 COPY .tmux.conf.local  /root/.tmux.conf.local
 COPY registration /root/
+COPY ghostunnel /root/
 
 WORKDIR /root
 RUN git clone https://github.com/gpakosz/.tmux.git
