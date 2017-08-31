@@ -7,6 +7,7 @@ LABEL version="0.1.0"
 COPY conf /conf
 COPY pconf /pconf
 COPY artifact.tgz /
+COPY ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifact.tgz
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf

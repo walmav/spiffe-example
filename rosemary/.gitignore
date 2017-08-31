@@ -8,3 +8,6 @@ database/pconf/
 database/conf/
 spire/pconf/
 spire/conf/
+blog/ghostunnel
+database/ghostunnel
+harness/ghostunnel

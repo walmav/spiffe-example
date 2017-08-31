@@ -1,55 +1,43 @@
-all: setup artifact services
+SHELL=/bin/bash
 
-setup:
-# Clean up dirs
-	rm -rf \
-		build/repos/ \
-		spire/conf/ \
-		spire/pconf/ \
-		blog/conf/ \
-		blog/pconf/ \
-		database/conf/ \
-		database/pconf/ \
-		artifact/ \
-		|| true
-# Create dirs
-	mkdir artifact
-	mkdir spire/conf/
-	mkdir spire/pconf/
-	mkdir blog/conf/
-	mkdir blog/pconf/
-	mkdir database/conf/
-	mkdir database/pconf/
-# TODO: Remove once Control Plane and Node Agent are public
+all: checkout build-artifact build-services
+
+checkout:
+	rm -rf build/repos
+	mkdir build/repos
 	git clone git@github.com:spiffe/sri.git build/repos/sri
 	git -C build/repos/sri reset --hard d6ba69e93fe5eb62d1ceb4f57b026bb9c39aabf5 # This demo works with this sri version
-	rm build/repos/sri/plugin/server/.conf/join_token.hcl # TODO: this file is breaking server, remove it
-# Copy configs
+
+build-artifact:
+	rm -rf artifact
+	mkdir artifact
+	docker-compose build build
+	docker-compose up -d build
+	docker-compose exec build cp /root/go/src/github.com/spiffe/sri/artifact.tgz /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/bin/ghostunnel /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration.json /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/sidecar /home/rosemary/artifact/
+	docker-compose stop build
+	cp artifact/artifact.tgz spire/
+	cp artifact/artifact.tgz database/
+	cp artifact/artifact.tgz blog/
+	cp artifact/artifact.tgz harness/
+	cp artifact/registration harness/
+	cp artifact/ghostunnel blog/
+	cp artifact/ghostunnel database/
+	cp artifact/ghostunnel harness/
+	
+build-services:
+	rm -f build/repos/sri/plugin/server/.conf/join_token.hcl # TODO: this file is breaking server, remove it
+	rm -rf {spire,blog,database}/{conf,pconf}
+	mkdir {spire,blog,database}/{conf,pconf}
 	cp build/repos/sri/cmd/spire-server/.conf/* spire/conf/
 	cp build/repos/sri/plugin/server/.conf/* spire/pconf/
 	cp build/repos/sri/cmd/spire-agent/.conf/* blog/conf/
 	cp build/repos/sri/plugin/agent/.conf/* blog/pconf/
 	cp build/repos/sri/cmd/spire-agent/.conf/* database/conf/
 	cp build/repos/sri/plugin/agent/.conf/* database/pconf/
-
-
-artifact:
-	docker-compose build build
-
-	docker-compose up -d build
-	docker-compose exec build cp /root/go/src/github.com/spiffe/sri/artifact.tgz /home/rosemary/artifact/
-	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration /home/rosemary/artifact/
-	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration.json /home/rosemary/artifact/
-	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/sidecar /home/rosemary/artifact/
-	docker-compose stop build
-
-	cp artifact/artifact.tgz spire/
-	cp artifact/artifact.tgz database/
-	cp artifact/artifact.tgz blog/
-	cp artifact/artifact.tgz harness/
-	cp artifact/registration harness/
-	
-services:
 	docker-compose build blog database spire harness
 
 demo:
@@ -63,4 +51,4 @@ demo:
 clean:
 	docker-compose down
 
-.PHONY: setup artifact services demo clean
+.PHONY: checkout build-artifact build-services demo clean
