@@ -39,7 +39,7 @@ func main() {
 			panic(err)
 		}
 		if valid {
-			fmt.Printf("Fetched entity %s is OK!\n\n\n", entityID)
+			fmt.Printf("Fetched entity %s is OK!\n\n", entityID)
 		} else {
 			fmt.Printf("Fetched entity %s mismatch! Aborting...\n", entityID)
 			return
@@ -54,7 +54,7 @@ func createEntry(registeredEntry *common.RegistrationEntry) (entityID string, er
 	if err != nil {
 		return
 	}
-	fmt.Printf("Invoking CreateEntry: %s\n\n", string(reqStr))
+	fmt.Printf("Invoking CreateEntry: %s\n", string(reqStr))
 
 	req, err := http.NewRequest("POST", entryURL, bytes.NewBuffer(reqStr))
 	if err != nil {
@@ -73,7 +73,7 @@ func createEntry(registeredEntry *common.RegistrationEntry) (entityID string, er
 	if err != nil {
 		return
 	}
-	fmt.Printf("CreateEntry returned: %s\n\n", string(respStr))
+	fmt.Printf("CreateEntry returned: %s\n", string(respStr))
 
 	registeredEntryID := &registration.RegistrationEntryID{}
 	err = json.Unmarshal([]byte(respStr), &registeredEntryID)
@@ -86,7 +86,7 @@ func createEntry(registeredEntry *common.RegistrationEntry) (entityID string, er
 }
 
 func validateEntry(entityID string, registeredEntry *common.RegistrationEntry) (ok bool, err error) {
-	fmt.Printf("Invoking FetchEntry: %s\n\n", entityID)
+	fmt.Printf("Invoking FetchEntry: %s\n", entityID)
 
 	req, err := http.NewRequest("GET", entryURL+"/"+entityID, bytes.NewBufferString(""))
 	if err != nil {
@@ -105,7 +105,7 @@ func validateEntry(entityID string, registeredEntry *common.RegistrationEntry) (
 	if err != nil {
 		return
 	}
-	fmt.Printf("FetchEntry returned: %s\n\n", string(respStr))
+	fmt.Printf("FetchEntry returned: %s\n", string(respStr))
 
 	var fetchedRegisteredEntry *common.RegistrationEntry
 	err = json.Unmarshal([]byte(respStr), &fetchedRegisteredEntry)
