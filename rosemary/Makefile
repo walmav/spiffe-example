@@ -5,12 +5,12 @@ all: checkout build-artifact build-services
 checkout:
 	rm -rf build/repos
 	mkdir build/repos
-	git clone git@github.com:spiffe/sri.git build/repos/sri
-	git -C build/repos/sri reset --hard d6ba69e93fe5eb62d1ceb4f57b026bb9c39aabf5 # This demo works with this sri version
+	git clone -b TEST-ONLY-disable-tls-for-debugging git@github.com:evan2645/sri.git build/repos/sri
+#	git -C build/repos/sri reset --hard d6ba69e93fe5eb62d1ceb4f57b026bb9c39aabf5 # This demo works with this sri version
 
 build-artifact:
-	rm -rf artifact
-	mkdir artifact
+	rm -rf artifact spire/upstreamca-memory-keys/
+	mkdir artifact spire/upstreamca-memory-keys/
 	docker-compose build build
 	docker-compose up -d build
 	docker-compose exec build cp /root/go/src/github.com/spiffe/sri/artifact.tgz /home/rosemary/artifact/
@@ -27,6 +27,7 @@ build-artifact:
 	cp artifact/ghostunnel blog/
 	cp artifact/ghostunnel database/
 	cp artifact/ghostunnel harness/
+	cp build/repos/sri/plugin/server/upstreamca-memory/pkg/_test_data/keys/* spire/upstreamca-memory-keys/
 	
 build-services:
 	rm -f build/repos/sri/plugin/server/.conf/join_token.hcl # TODO: this file is breaking server, remove it
@@ -38,6 +39,11 @@ build-services:
 	cp build/repos/sri/plugin/agent/.conf/* blog/pconf/
 	cp build/repos/sri/cmd/spire-agent/.conf/* database/conf/
 	cp build/repos/sri/plugin/agent/.conf/* database/pconf/
+	cp blog/custom_conf/* blog/conf/
+	cp blog/custom_pconf/* blog/pconf/
+	cp database/custom_conf/* database/conf/
+	cp database/custom_pconf/* database/pconf/
+	cp spire/custom_pconf/* spire/pconf/
 	docker-compose build blog database spire harness
 
 demo:

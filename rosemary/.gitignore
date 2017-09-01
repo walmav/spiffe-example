@@ -8,6 +8,7 @@ database/pconf/
 database/conf/
 spire/pconf/
 spire/conf/
+spire/upstreamca-memory-keys/
 blog/ghostunnel
 database/ghostunnel
 harness/ghostunnel
