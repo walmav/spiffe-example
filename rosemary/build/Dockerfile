@@ -4,6 +4,12 @@ LABEL Description="Certificate Rotation SPIFFE: build"
 LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
+ARG DEBUG
+ARG SPIRE_GOOPTS
+
+ENV DEBUG        "$DEBUG"
+ENV SPIRE_GOOPTS "$SPIRE_GOOPTS"
+
 RUN apt-get update -y
 RUN apt-get install -y git curl unzip build-essential
 

@@ -1,12 +1,13 @@
 SHELL=/bin/bash
+SPIRE_REPO ?= evan2645/sri
+SPIRE_REF  ?= TEST-ONLY-disable-tls-for-debugging
 
 all: checkout build-artifact build-services
 
 checkout:
 	rm -rf build/repos
 	mkdir build/repos
-	git clone -b TEST-ONLY-disable-tls-for-debugging git@github.com:evan2645/sri.git build/repos/sri
-#	git -C build/repos/sri reset --hard d6ba69e93fe5eb62d1ceb4f57b026bb9c39aabf5 # This demo works with this sri version
+	git clone -b $(SPIRE_REF) git@github.com:$(SPIRE_REPO).git build/repos/sri
 
 build-artifact:
 	rm -rf artifact spire/upstreamca-memory-keys/
