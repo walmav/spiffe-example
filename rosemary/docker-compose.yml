@@ -5,7 +5,12 @@ services:
    build:
       privileged: true
       container_name: build
-      build: build
+      build:
+        context: build
+        args:
+          - SPIRE_GOOPTS=${SPIRE_GOOPTS}
+          - DEBUG=${DEBUG}
+
       hostname: build
       tty: true
       volumes:
