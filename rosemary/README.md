@@ -16,11 +16,11 @@ themselves.
 
 Ghostunnel uses [Go SPIFFE library](https://github.com/spiffe/go-spiffe) to parse and verify the SAN URI SPIFFE value.
 
-In each of these containers there is a [Spire Agent](https://github.com/spiffe/sri/cmd/spire-agent) and a [Workload Sidecar](https://github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar).
+In each of these containers there is a [Spire Agent](https://github.com/spiffe/sri/tree/master/cmd/spire-agent) and a [Workload Sidecar](/rosemary/build/tools/sidecar).
 
 ### Spire Server Container
 
-One container has a [Spire Server](https://github.com/spiffe/sri/cmd/spire-server) with a SQLite data store database.
+One container has a [Spire Server](https://github.com/spiffe/sri/tree/master/cmd/spire-server) with a SQLite data store database.
 
 
 ### Diagram
@@ -61,7 +61,7 @@ These are the steps performed by the demo:
 - Seed with SPIRE server IP 
 - Seed with SPIRE SPIFFE ID (if we are using well known Trust Domain, SPIRE Server SPIFFE ID can be derived)
 3. Setup DataStore on Spire Server
-- Call registration API to insert Workload data. (Using CLI [registration](/build/tools/registration) ) 
+- Call registration API to insert Workload data. (Using CLI [registration](/rosemary/build/tools/registration) ) 
 4. Bootstrap Workload Sidecar with the SPIRE Agent Workload API destination 
 5. Bootstrap SPIRE Agent attestation with join token (have to replicate token into SPIRE Server)
 6. Initiate SPIRE Agent Bootstrap and Attestation 
