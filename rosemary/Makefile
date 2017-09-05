@@ -1,6 +1,6 @@
 SHELL=/bin/bash
-SPIRE_REPO ?= evan2645/sri
-SPIRE_REF  ?= TEST-ONLY-disable-tls-for-debugging
+SPIRE_REPO ?= walmav/sri
+SPIRE_REF  ?= tls_changes
 
 all: checkout build-artifact build-services
 
