@@ -1,7 +1,7 @@
 ServerAddress = "spire"
 ServerPort = "8081"
 TrustDomain = "localhost"
-TrustBundlePath = ".conf/bundle.pem"
+TrustBundlePath = ".conf/carootcert.pem"
 
 BindAddress = "127.0.0.1"
 BindPort = "8088"

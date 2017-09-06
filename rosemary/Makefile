@@ -1,6 +1,6 @@
 SHELL=/bin/bash
-SPIRE_REPO ?= evan2645/sri
-SPIRE_REF  ?= TEST-ONLY-disable-tls-for-debugging
+SPIRE_REPO ?= spiffe/sri
+SPIRE_REF  ?= ROSEMARY_WIP_DEMO3
 
 all: checkout build-artifact build-services
 
@@ -48,7 +48,9 @@ build-services:
 	docker-compose build blog database spire harness
 
 demo:
-	docker-compose up -d blog database spire harness
+	docker-compose up -d spire
+	sleep 5 # TODO: Find another way of making sure server is up before agents
+	docker-compose up -d blog database harness
 	docker-compose exec blog cp /home/rosemary/artifact/sidecar /sidecar/sidecar
 	docker-compose exec database cp /home/rosemary/artifact/sidecar /sidecar/sidecar
 	docker-compose exec harness cp /home/rosemary/harness/rosemary.yml /root/.tmuxinator/rosemary.yml
