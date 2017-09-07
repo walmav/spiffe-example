@@ -1,20 +1,20 @@
 SHELL=/bin/bash
-SPIRE_REPO ?= spiffe/sri
-SPIRE_REF  ?= ROSEMARY_WIP_DEMO3
+SPIRE_REPO ?= spiffe/spire
+SPIRE_REF  ?= master
 
 all: checkout build-artifact build-services
 
 checkout:
 	rm -rf build/repos
 	mkdir build/repos
-	git clone -b $(SPIRE_REF) git@github.com:$(SPIRE_REPO).git build/repos/sri
+	git clone -b $(SPIRE_REF) git@github.com:$(SPIRE_REPO).git build/repos/spire
 
 build-artifact:
 	rm -rf artifact spire/upstreamca-memory-keys/
 	mkdir artifact spire/upstreamca-memory-keys/
 	docker-compose build build
 	docker-compose up -d build
-	docker-compose exec build cp /root/go/src/github.com/spiffe/sri/artifact.tgz /home/rosemary/artifact/
+	docker-compose exec build cp /root/go/src/github.com/spiffe/spire/artifact.tgz /home/rosemary/artifact/
 	docker-compose exec build cp /root/go/bin/ghostunnel /home/rosemary/artifact/
 	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration /home/rosemary/artifact/
 	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration.json /home/rosemary/artifact/
@@ -28,18 +28,18 @@ build-artifact:
 	cp artifact/ghostunnel blog/
 	cp artifact/ghostunnel database/
 	cp artifact/ghostunnel harness/
-	cp build/repos/sri/plugin/server/upstreamca-memory/pkg/_test_data/keys/* spire/upstreamca-memory-keys/
+	cp build/repos/spire/plugin/server/upstreamca-memory/pkg/_test_data/keys/* spire/upstreamca-memory-keys/
 	
 build-services:
-	rm -f build/repos/sri/plugin/server/.conf/join_token.hcl # TODO: this file is breaking server, remove it
+	rm -f build/repos/spire/plugin/server/.conf/join_token.hcl # TODO: this file is breaking server, remove it
 	rm -rf {spire,blog,database}/{conf,pconf}
 	mkdir {spire,blog,database}/{conf,pconf}
-	cp build/repos/sri/cmd/spire-server/.conf/* spire/conf/
-	cp build/repos/sri/plugin/server/.conf/* spire/pconf/
-	cp build/repos/sri/cmd/spire-agent/.conf/* blog/conf/
-	cp build/repos/sri/plugin/agent/.conf/* blog/pconf/
-	cp build/repos/sri/cmd/spire-agent/.conf/* database/conf/
-	cp build/repos/sri/plugin/agent/.conf/* database/pconf/
+	cp build/repos/spire/cmd/spire-server/.conf/* spire/conf/
+	cp build/repos/spire/plugin/server/.conf/* spire/pconf/
+	cp build/repos/spire/cmd/spire-agent/.conf/* blog/conf/
+	cp build/repos/spire/plugin/agent/.conf/* blog/pconf/
+	cp build/repos/spire/cmd/spire-agent/.conf/* database/conf/
+	cp build/repos/spire/plugin/agent/.conf/* database/pconf/
 	cp blog/custom_conf/* blog/conf/
 	cp blog/custom_pconf/* blog/pconf/
 	cp database/custom_conf/* database/conf/
