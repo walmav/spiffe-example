@@ -14,8 +14,8 @@ RUN apt-get update -y
 RUN apt-get install -y git curl unzip build-essential
 
 # Build SRI
-COPY repos/sri /root/go/src/github.com/spiffe/sri
-WORKDIR /root/go/src/github.com/spiffe/sri/
+COPY repos/spire /root/go/src/github.com/spiffe/spire
+WORKDIR /root/go/src/github.com/spiffe/spire/
 RUN ./build.sh setup
 RUN ./build.sh deps
 RUN ./build.sh binaries
@@ -28,7 +28,7 @@ RUN ./build.sh all
 
 # Build ghosttunnel
 ENV GOPATH=/root/go
-ENV GOROOT=/root/go/src/github.com/spiffe/sri/.build/golang-1.8.3
+ENV GOROOT=/root/go/src/github.com/spiffe/spire/.build/golang-1.8.3
 ENV PATH=${GOROOT}/bin:${PATH}
 RUN go get -v github.com/spiffe/ghostunnel
 

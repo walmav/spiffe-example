@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"reflect"
 
-	"github.com/spiffe/sri/pkg/api/registration"
-	"github.com/spiffe/sri/pkg/common"
+	"github.com/spiffe/spire/pkg/api/registration"
+	"github.com/spiffe/spire/pkg/common"
 )
 
 const (
