@@ -1,13 +1,14 @@
 SHELL=/bin/bash
 SPIRE_REPO ?= spiffe/spire
-SPIRE_REF  ?= upstreamca-run-fix
+SPIRE_REF  ?= d3eace4bf3648b500c4cda81e7d029c0216192c0 # branch, tag or commit hash
 
 all: checkout build-artifact build-services
 
 checkout:
 	rm -rf build/repos
 	mkdir build/repos
-	git clone -b $(SPIRE_REF) git@github.com:$(SPIRE_REPO).git build/repos/spire
+	git clone git@github.com:$(SPIRE_REPO).git build/repos/spire
+	git -C build/repos/spire checkout $(SPIRE_REF)
 
 build-artifact:
 	rm -rf artifact spire/upstreamca-memory-keys/
