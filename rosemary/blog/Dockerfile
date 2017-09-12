@@ -7,12 +7,16 @@ LABEL version="0.1.0"
 RUN apt-get update -y
 RUN apt-get install -y openssl
 
-COPY conf /cmd/spire-agent/.conf
-COPY pconf /plugin/agent/.conf
+COPY conf /spire/.conf
+COPY pconf /spire/plugin/agent/.conf
 COPY artifact.tgz /
 COPY ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifact.tgz
-ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
-WORKDIR /cmd/spire-agent/
+WORKDIR /spire/
+
+RUN useradd -ms /bin/bash blog
+RUN chown -R blog /spire /sidecar
+USER blog
+
 CMD ./spire-agent run
