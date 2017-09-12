@@ -10,4 +10,9 @@ COPY artifact.tgz /
 COPY upstreamca-memory-keys /spire/keys
 RUN tar --directory / -xvzf /artifact.tgz
 WORKDIR /spire/
+
+RUN useradd -ms /bin/bash server
+RUN chown -R server /spire
+USER server
+
 CMD ./spire-server run

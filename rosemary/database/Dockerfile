@@ -14,5 +14,10 @@ COPY ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifact.tgz
 WORKDIR /spire/
+
+RUN useradd -ms /bin/bash database
+RUN chown -R database /spire /sidecar
+USER database
+
 CMD ./spire-agent run
 
