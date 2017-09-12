@@ -28,7 +28,7 @@ RUN ./build.sh all
 
 # Build ghosttunnel
 ENV GOPATH=/root/go
-ENV GOROOT=/root/go/src/github.com/spiffe/spire/.build/golang-1.8.3
+ENV GOROOT=/root/go/src/github.com/spiffe/spire/.build-linux-x86_64/golang-1.8.3
 ENV PATH=${GOROOT}/bin:${PATH}
 RUN go get -v github.com/spiffe/ghostunnel
 

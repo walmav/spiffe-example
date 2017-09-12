@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 SPIRE_REPO ?= spiffe/spire
-SPIRE_REF  ?= master
+SPIRE_REF  ?= upstreamca-run-fix
 
 all: checkout build-artifact build-services
 
@@ -14,7 +14,7 @@ build-artifact:
 	mkdir artifact spire/upstreamca-memory-keys/
 	docker-compose build build
 	docker-compose up -d build
-	docker-compose exec build cp /root/go/src/github.com/spiffe/spire/artifact.tgz /home/rosemary/artifact/
+	docker-compose exec build find /root/go/src/github.com/spiffe/spire/ -name '*.tgz' -exec cp {} /home/rosemary/artifact/artifact.tgz \;
 	docker-compose exec build cp /root/go/bin/ghostunnel /home/rosemary/artifact/
 	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration /home/rosemary/artifact/
 	docker-compose exec build cp /root/go/src/github.com/spiffe/spiffe-example/rosemary/build/tools/registration/registration.json /home/rosemary/artifact/
@@ -44,6 +44,7 @@ build-services:
 	cp blog/custom_pconf/* blog/pconf/
 	cp database/custom_conf/* database/conf/
 	cp database/custom_pconf/* database/pconf/
+	cp spire/custom_conf/* spire/conf/
 	cp spire/custom_pconf/* spire/pconf/
 	docker-compose build blog database spire harness
 
