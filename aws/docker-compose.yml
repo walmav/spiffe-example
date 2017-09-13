@@ -14,7 +14,7 @@ services:
       hostname: build
       tty: true
       volumes:
-        - .:/home/artifacts
+        - .artifacts:/home/artifacts
 
    harness:
       privileged: true
@@ -24,7 +24,7 @@ services:
       tty: true
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - .:/home/rosemary
+        - .artifacts:/home/artifacts
 
    blog:
       container_name: blog
@@ -32,7 +32,7 @@ services:
       hostname: blog
       tty: true
       volumes:
-        - .:/home/rosemary
+        - .:/home/aws
 
    database:
       container_name: database
@@ -40,7 +40,7 @@ services:
       hostname: database
       tty: true
       volumes:
-        - .:/home/rosemary
+        - .:/home/aws
         - "./mariadb:/var/lib/mysql:rw"
       environment:
         - "MYSQL_DATABASE=forum_db"
@@ -54,4 +54,4 @@ services:
       hostname: spire
       tty: true
       volumes:
-        - .:/home/rosemary
+        - .:/home/aws

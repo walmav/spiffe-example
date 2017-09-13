@@ -35,7 +35,7 @@ WORKDIR /cmd/spire-agent/
 #--------------------
 
 # Create a vault user and group first so the IDs are the same
-RUN addgroup valut && \
+RUN addgroup vault && \
     adduser -u 1010 -S -G vault vault
 
 
@@ -55,4 +55,4 @@ VOLUME /vault/file
 
 
 
-CMD ./spire-agent run
+# CMD ./spire-agent run

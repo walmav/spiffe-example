@@ -5,8 +5,9 @@ SPIRE_REF  ?= master
 AWS_DOMAIN   ?= s3.us-east-2.amazonaws.com
 SPIRE_HASH   ?= ef3ce96
 SPIRE_OS     ?= linux-x86-64
-SPIRE_ART    ?= artifacts/artifacts.tgz
-GHOST_ART   ?= artifacts/ghostunnel
+ART_DIR      ?= .artifacts
+SPIRE_ART    ?= $(ART_DIR)/artifacts.tgz
+GHOST_ART   ?= $(ART_DIR)/ghostunnel
 
 # https://s3.us-east-2.amazonaws.com/scytale-artifacts/spire/spire-ef3ce96-linux-x86_64-glibc.tgz
 
@@ -14,22 +15,28 @@ all: checkout build-artifact build-services
 
 
 checkout:
-	rm -rf artifacts
-	mkdir artifacts
-	rm -rf build/repos
-	mkdir build/repos
+	rm -rf $(ART_DIR)
+	mkdir $(ART_DIR)
 	curl -o $(SPIRE_ART) https://$(AWS_DOMAIN)/scytale-artifacts/spire/spire-$(SPIRE_HASH)-$(SPIRE_OS)-glibc.tgz
 
 
 build-artifact:
 	echo "BUILD-ARTIFACT"
+	rm -rf blog/${ART_DIR}
+	rm -rf database/${ART_DIR}
+	rm -rf spire/${ART_DIR}
+	mkdir blog/${ART_DIR}
+	mkdir database/${ART_DIR}
+	mkdir spire/${ART_DIR}
 	docker-compose build build
 	docker-compose up -d build
 	docker-compose exec build cp /root/go/bin/ghostunnel /home/artifacts
 	docker-compose stop build
-	cp $(SPIRE_ART) spire/
-	cp $(SPIRE_ART) blog/
-	cp $(SPIRE_ART) database/
+	cp $(SPIRE_ART) spire/${ART_DIR}
+	cp $(SPIRE_ART) blog/${ART_DIR}
+	cp $(SPIRE_ART) database/${ART_DIR}
+	cp $(GHOST_ART) blog/${ART_DIR}
+	cp $(GHOST_ART) database/${ART_DIR}
 	docker-compose build blog 
 
 build-services:
