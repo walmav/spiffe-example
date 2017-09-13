@@ -1,0 +1,57 @@
+version: "2"
+
+
+services:
+   build:
+      privileged: true
+      container_name: build
+      build:
+        context: build
+        args:
+          - SPIRE_GOOPTS=${SPIRE_GOOPTS}
+          - DEBUG=${DEBUG}
+
+      hostname: build
+      tty: true
+      volumes:
+        - .:/home/artifacts
+
+   harness:
+      privileged: true
+      container_name: harness
+      build: harness
+      hostname: harness
+      tty: true
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - .:/home/rosemary
+
+   blog:
+      container_name: blog
+      build: blog
+      hostname: blog
+      tty: true
+      volumes:
+        - .:/home/rosemary
+
+   database:
+      container_name: database
+      build: database
+      hostname: database
+      tty: true
+      volumes:
+        - .:/home/rosemary
+        - "./mariadb:/var/lib/mysql:rw"
+      environment:
+        - "MYSQL_DATABASE=forum_db"
+        - "MYSQL_USER=forum_db_user"
+        - "MYSQL_PASWORD=forum_db_user_pass"
+        - "MYSQL_ROOT_PASSWORD=db_root_pass"
+
+   spire:
+      container_name: spire
+      build: spire
+      hostname: spire
+      tty: true
+      volumes:
+        - .:/home/rosemary

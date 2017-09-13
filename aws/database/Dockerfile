@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM mariadb:latest
 
 LABEL Description="Certificate Rotation SPIFFE: Database"
 LABEL vendor="SPIFFE"
@@ -14,5 +14,11 @@ COPY ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifact.tgz
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
+
 WORKDIR /cmd/spire-agent/
-CMD ./spire-agent run
+
+
+
+
+
+# CMD ./spire-agent run
