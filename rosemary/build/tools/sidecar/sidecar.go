@@ -24,7 +24,7 @@ const (
 
 var (
 	config     *SidecarConfig
-	ghostunnel *os.Process
+	ghostunnel *exec.Cmd
 )
 
 func main() {
@@ -39,7 +39,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("Sidecar is up! Will use agent at %s\n\n", config.AgentURL)
+	log("Sidecar is up! Will use agent at %s\n\n", config.AgentURL)
 
 	err = daemon()
 	if err != nil {
@@ -68,31 +68,32 @@ func daemon() error {
 		timer := time.NewTimer(time.Second * time.Duration(ttl/2))
 
 		// Wait for either timer or interrupt signal
-		fmt.Printf("Will wait for TTL/2 (%d seconds)\n", ttl/2)
+		log("Will wait for TTL/2 (%d seconds)\n", ttl/2)
 		select {
 		case <-timer.C:
-			fmt.Println("Time is up! Will renew cert.")
+			log("Time is up! Will renew cert.\n")
 			// Continue
 		case <-interrupt:
-			fmt.Println("Interrupted! Will exit.")
+			log("Interrupted! Will exit.\n")
 			return nil
 		}
 	}
 }
 
 func signalGhostunnel(pk, crt string) (err error) {
-	if ghostunnel == nil {
+	if ghostunnel == nil || ghostunnel.ProcessState.Exited() {
 		// Start Ghostunnel
-		cmdstr := fmt.Sprintf("%s --keystore %s --cacert %s", config.GhostunnelCmd, pk, crt)
-		cmd := exec.Command(cmdstr)
-		err = cmd.Start()
+		args := fmt.Sprintf("%s --keystore %s --cacert %s", config.GhostunnelArgs, pk, crt)
+		ghostunnel := exec.Command(config.GhostunnelCmd, args)
+		ghostunnel.Stdout = os.Stdout
+		ghostunnel.Stderr = os.Stderr
+		err = ghostunnel.Start()
 		if err != nil {
 			return
 		}
-		ghostunnel = cmd.Process
 	} else {
 		// Signal Ghostunnel to reload certs
-		err = ghostunnel.Signal(syscall.SIGUSR1)
+		err = ghostunnel.Process.Signal(syscall.SIGUSR1)
 		if err != nil {
 			return
 		}
@@ -107,15 +108,15 @@ func dumpBundles() (pk, crt string, ttl int32, err error) {
 		return
 	}
 
-	if len(bundles.WorkloadEntry) == 0 {
+	if len(bundles.Bundles) == 0 {
 		err = errors.New("Fetched zero bundles")
 		return
 	}
 
 	ttl = bundles.Ttl
 
-	fmt.Printf("Writing %d bundles!\n", len(bundles.WorkloadEntry))
-	for index, workloadEntry := range bundles.WorkloadEntry {
+	log("Writing %d bundles!\n", len(bundles.Bundles))
+	for index, bundle := range bundles.Bundles {
 		pkFilename := fmt.Sprintf("%s/%d.key", config.CertDir, index)
 		certFilename := fmt.Sprintf("%s/%d.cert", config.CertDir, index)
 		if index == 0 {
@@ -123,15 +124,15 @@ func dumpBundles() (pk, crt string, ttl int32, err error) {
 			crt = certFilename
 		}
 
-		fmt.Printf("Writing keystore #%d...\n", index+1)
-		keystore := append(workloadEntry.SvidPrivateKey, workloadEntry.Svid...)
+		log("Writing keystore #%d...\n", index+1)
+		keystore := append(bundle.SvidPrivateKey, bundle.Svid...)
 		err = ioutil.WriteFile(pkFilename, keystore, os.ModePerm)
 		if err != nil {
 			return
 		}
 
-		fmt.Printf("Writing CA certs #%d...\n", index+1)
-		err = ioutil.WriteFile(certFilename, workloadEntry.ControlPlaneBundle, os.ModePerm)
+		log("Writing CA certs #%d...\n", index+1)
+		err = ioutil.WriteFile(certFilename, bundle.SvidBundle, os.ModePerm)
 		if err != nil {
 			return
 		}
@@ -144,9 +145,9 @@ func fetchBundles() (bundles *workload.Bundles, err error) {
 	if err != nil {
 		return
 	}
-	fmt.Printf("Invoking FetchAllBundles: %s\n\n", string(reqStr))
+	log("Invoking FetchAllBundles\n")
 
-	req, err := http.NewRequest("POST", config.AgentURL+fetchAllBundlesSuffix, bytes.NewBuffer(reqStr))
+	req, err := http.NewRequest("GET", config.AgentURL+fetchAllBundlesSuffix, bytes.NewBuffer(reqStr))
 	if err != nil {
 		return
 	}
@@ -163,7 +164,7 @@ func fetchBundles() (bundles *workload.Bundles, err error) {
 	if err != nil {
 		return
 	}
-	fmt.Printf("FetchAllBundles returned: %s\n\n", string(respStr))
+	log("FetchAllBundles returned\n")
 
 	err = json.Unmarshal([]byte(respStr), &bundles)
 	if err != nil {
@@ -171,4 +172,9 @@ func fetchBundles() (bundles *workload.Bundles, err error) {
 	}
 
 	return
+}
+
+func log(format string, a ...interface{}) {
+	fmt.Print(time.Now().Format(time.Stamp), ": ")
+	fmt.Printf(format, a...)
 }

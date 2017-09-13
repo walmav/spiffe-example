@@ -8,9 +8,10 @@ import (
 
 // SidecarConfig is HCL config data
 type SidecarConfig struct {
-	AgentURL      string `hcl:"agentUrl"`
-	GhostunnelCmd string `hcl:"ghostunnelCmd"`
-	CertDir       string `hcl:"certDir"`
+	AgentURL       string `hcl:"agentUrl"`
+	GhostunnelCmd  string `hcl:"ghostunnelCmd"`
+	GhostunnelArgs string `hcl:"ghostunnelCmd"`
+	CertDir        string `hcl:"certDir"`
 }
 
 // ParseConfig parses the given HCL file into a SidecarConfig struct

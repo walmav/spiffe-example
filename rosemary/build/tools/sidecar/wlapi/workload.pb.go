@@ -8,16 +8,16 @@ It is generated from these files:
 	workload.proto
 
 It has these top-level messages:
-	WorkloadEntry
-	SpiffeId
 	Bundles
+	WorkloadEntry
+	SpiffeID
+	Empty
 */
 package workload
 
 import proto "github.com/golang/protobuf/proto"
 import fmt "fmt"
 import math "math"
-import common "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi/common"
 
 import (
 	context "golang.org/x/net/context"
@@ -35,105 +35,53 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
-// Empty from public import github.com/spiffe/sri/pkg/common/common.proto
-type Empty common.Empty
-
-func (m *Empty) Reset()         { (*common.Empty)(m).Reset() }
-func (m *Empty) String() string { return (*common.Empty)(m).String() }
-func (*Empty) ProtoMessage()    {}
-
-// AttestedData from public import github.com/spiffe/sri/pkg/common/common.proto
-type AttestedData common.AttestedData
-
-func (m *AttestedData) Reset()          { (*common.AttestedData)(m).Reset() }
-func (m *AttestedData) String() string  { return (*common.AttestedData)(m).String() }
-func (*AttestedData) ProtoMessage()     {}
-func (m *AttestedData) GetType() string { return (*common.AttestedData)(m).GetType() }
-func (m *AttestedData) GetData() []byte { return (*common.AttestedData)(m).GetData() }
-
-// Selector from public import github.com/spiffe/sri/pkg/common/common.proto
-type Selector common.Selector
-
-func (m *Selector) Reset()           { (*common.Selector)(m).Reset() }
-func (m *Selector) String() string   { return (*common.Selector)(m).String() }
-func (*Selector) ProtoMessage()      {}
-func (m *Selector) GetType() string  { return (*common.Selector)(m).GetType() }
-func (m *Selector) GetValue() string { return (*common.Selector)(m).GetValue() }
-
-// Selectors from public import github.com/spiffe/sri/pkg/common/common.proto
-type Selectors common.Selectors
-
-func (m *Selectors) Reset()         { (*common.Selectors)(m).Reset() }
-func (m *Selectors) String() string { return (*common.Selectors)(m).String() }
-func (*Selectors) ProtoMessage()    {}
-func (m *Selectors) GetEntries() []*Selector {
-	o := (*common.Selectors)(m).GetEntries()
-	if o == nil {
-		return nil
-	}
-	s := make([]*Selector, len(o))
-	for i, x := range o {
-		s[i] = (*Selector)(x)
-	}
-	return s
+// The Bundles message carries a group of workload SVIDs and their
+// associated information. It also carries a TTL to inform the workload
+// when it should check back next.
+type Bundles struct {
+	Bundles []*WorkloadEntry `protobuf:"bytes,1,rep,name=bundles" json:"bundles,omitempty"`
+	Ttl     int32            `protobuf:"varint,2,opt,name=ttl" json:"ttl,omitempty"`
 }
 
-// RegistrationEntry from public import github.com/spiffe/sri/pkg/common/common.proto
-type RegistrationEntry common.RegistrationEntry
+func (m *Bundles) Reset()                    { *m = Bundles{} }
+func (m *Bundles) String() string            { return proto.CompactTextString(m) }
+func (*Bundles) ProtoMessage()               {}
+func (*Bundles) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
 
-func (m *RegistrationEntry) Reset()         { (*common.RegistrationEntry)(m).Reset() }
-func (m *RegistrationEntry) String() string { return (*common.RegistrationEntry)(m).String() }
-func (*RegistrationEntry) ProtoMessage()    {}
-func (m *RegistrationEntry) GetSelectors() []*Selector {
-	o := (*common.RegistrationEntry)(m).GetSelectors()
-	if o == nil {
-		return nil
+func (m *Bundles) GetBundles() []*WorkloadEntry {
+	if m != nil {
+		return m.Bundles
 	}
-	s := make([]*Selector, len(o))
-	for i, x := range o {
-		s[i] = (*Selector)(x)
-	}
-	return s
-}
-func (m *RegistrationEntry) GetParentId() string { return (*common.RegistrationEntry)(m).GetParentId() }
-func (m *RegistrationEntry) GetSpiffeId() string { return (*common.RegistrationEntry)(m).GetSpiffeId() }
-func (m *RegistrationEntry) GetTtl() int32       { return (*common.RegistrationEntry)(m).GetTtl() }
-func (m *RegistrationEntry) GetFbSpiffeIds() []string {
-	return (*common.RegistrationEntry)(m).GetFbSpiffeIds()
+	return nil
 }
 
-// RegistrationEntries from public import github.com/spiffe/sri/pkg/common/common.proto
-type RegistrationEntries common.RegistrationEntries
-
-func (m *RegistrationEntries) Reset()         { (*common.RegistrationEntries)(m).Reset() }
-func (m *RegistrationEntries) String() string { return (*common.RegistrationEntries)(m).String() }
-func (*RegistrationEntries) ProtoMessage()    {}
-func (m *RegistrationEntries) GetEntries() []*RegistrationEntry {
-	o := (*common.RegistrationEntries)(m).GetEntries()
-	if o == nil {
-		return nil
+func (m *Bundles) GetTtl() int32 {
+	if m != nil {
+		return m.Ttl
 	}
-	s := make([]*RegistrationEntry, len(o))
-	for i, x := range o {
-		s[i] = (*RegistrationEntry)(x)
-	}
-	return s
+	return 0
 }
 
-// *Depending on the context it represents a Workload's SVID and its associated information
-// or a cert bundle of a remote control plane for the purposes of trusting remote workloads.
+// The WorkloadEntry message carries a single SVID and all associated
+// information, including CA bundles. All `bytes` types are ASN.1 DER encoded
 type WorkloadEntry struct {
-	SpiffeId           string            `protobuf:"bytes,1,opt,name=spiffe_id,json=spiffeId" json:"spiffe_id,omitempty"`
-	Svid               []byte            `protobuf:"bytes,2,opt,name=svid,proto3" json:"svid,omitempty"`
-	SvidPrivateKey     []byte            `protobuf:"bytes,3,opt,name=svid_private_key,json=svidPrivateKey,proto3" json:"svid_private_key,omitempty"`
-	ControlPlaneBundle []byte            `protobuf:"bytes,4,opt,name=control_plane_bundle,json=controlPlaneBundle,proto3" json:"control_plane_bundle,omitempty"`
-	FederatedBundles   map[string][]byte `protobuf:"bytes,5,rep,name=federated_bundles,json=federatedBundles" json:"federated_bundles,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	// The SPIFFE ID of the SVID in this entry
+	SpiffeId string `protobuf:"bytes,1,opt,name=spiffe_id,json=spiffeId" json:"spiffe_id,omitempty"`
+	// The SVID itself
+	Svid []byte `protobuf:"bytes,2,opt,name=svid,proto3" json:"svid,omitempty"`
+	// The SVID private key
+	SvidPrivateKey []byte `protobuf:"bytes,3,opt,name=svid_private_key,json=svidPrivateKey,proto3" json:"svid_private_key,omitempty"`
+	// CA certificates belonging to the SVID
+	SvidBundle []byte `protobuf:"bytes,4,opt,name=svid_bundle,json=svidBundle,proto3" json:"svid_bundle,omitempty"`
+	// CA certificates that the workload should trust, mapped
+	// by the trust domain of the external authority
+	FederatedBundles map[string][]byte `protobuf:"bytes,5,rep,name=federated_bundles,json=federatedBundles" json:"federated_bundles,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *WorkloadEntry) Reset()                    { *m = WorkloadEntry{} }
 func (m *WorkloadEntry) String() string            { return proto.CompactTextString(m) }
 func (*WorkloadEntry) ProtoMessage()               {}
-func (*WorkloadEntry) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*WorkloadEntry) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
 func (m *WorkloadEntry) GetSpiffeId() string {
 	if m != nil {
@@ -156,9 +104,9 @@ func (m *WorkloadEntry) GetSvidPrivateKey() []byte {
 	return nil
 }
 
-func (m *WorkloadEntry) GetControlPlaneBundle() []byte {
+func (m *WorkloadEntry) GetSvidBundle() []byte {
 	if m != nil {
-		return m.ControlPlaneBundle
+		return m.SvidBundle
 	}
 	return nil
 }
@@ -170,53 +118,37 @@ func (m *WorkloadEntry) GetFederatedBundles() map[string][]byte {
 	return nil
 }
 
-// *Represents and SPIFFEId that depending on its association it could be used to
-// request for a SVID and the control plane's cert bundle or request for a Federated cert Bundle.
-type SpiffeId struct {
+// The SpiffeID message carries only a SPIFFE ID
+type SpiffeID struct {
 	Id string `protobuf:"bytes,1,opt,name=id" json:"id,omitempty"`
 }
 
-func (m *SpiffeId) Reset()                    { *m = SpiffeId{} }
-func (m *SpiffeId) String() string            { return proto.CompactTextString(m) }
-func (*SpiffeId) ProtoMessage()               {}
-func (*SpiffeId) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (m *SpiffeID) Reset()                    { *m = SpiffeID{} }
+func (m *SpiffeID) String() string            { return proto.CompactTextString(m) }
+func (*SpiffeID) ProtoMessage()               {}
+func (*SpiffeID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
 
-func (m *SpiffeId) GetId() string {
+func (m *SpiffeID) GetId() string {
 	if m != nil {
 		return m.Id
 	}
 	return ""
 }
 
-// *Represents a list of WorkloadEntry and a Control Plane bundle.
-type Bundles struct {
-	WorkloadEntry []*WorkloadEntry `protobuf:"bytes,1,rep,name=workload_entry,json=workloadEntry" json:"workload_entry,omitempty"`
-	Ttl           int32            `protobuf:"varint,2,opt,name=ttl" json:"ttl,omitempty"`
+// Represents a message with no fields
+type Empty struct {
 }
 
-func (m *Bundles) Reset()                    { *m = Bundles{} }
-func (m *Bundles) String() string            { return proto.CompactTextString(m) }
-func (*Bundles) ProtoMessage()               {}
-func (*Bundles) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
-
-func (m *Bundles) GetWorkloadEntry() []*WorkloadEntry {
-	if m != nil {
-		return m.WorkloadEntry
-	}
-	return nil
-}
-
-func (m *Bundles) GetTtl() int32 {
-	if m != nil {
-		return m.Ttl
-	}
-	return 0
-}
+func (m *Empty) Reset()                    { *m = Empty{} }
+func (m *Empty) String() string            { return proto.CompactTextString(m) }
+func (*Empty) ProtoMessage()               {}
+func (*Empty) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
 func init() {
-	proto.RegisterType((*WorkloadEntry)(nil), "workload.WorkloadEntry")
-	proto.RegisterType((*SpiffeId)(nil), "workload.SpiffeId")
-	proto.RegisterType((*Bundles)(nil), "workload.Bundles")
+	proto.RegisterType((*Bundles)(nil), "spire.api.workload.Bundles")
+	proto.RegisterType((*WorkloadEntry)(nil), "spire.api.workload.WorkloadEntry")
+	proto.RegisterType((*SpiffeID)(nil), "spire.api.workload.SpiffeID")
+	proto.RegisterType((*Empty)(nil), "spire.api.workload.Empty")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -230,12 +162,10 @@ const _ = grpc.SupportPackageIsVersion4
 // Client API for Workload service
 
 type WorkloadClient interface {
-	// /Depending on what the SPIFFEId is associated with,
-	// /it requests SVID and cert bundle of the control plane corresponding to the SPIFFEId
-	// /or requests trusted external CA cert bundles corresponding to the SPIFFEId.
-	FetchBundles(ctx context.Context, in *SpiffeId, opts ...grpc.CallOption) (*Bundles, error)
-	// /Requests all SVIDs and cert bundle of the control plane and all trusted external CA cert bundles associated with the workload.
-	FetchAllBundles(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*Bundles, error)
+	// Fetch bundles for the SVID with the given SPIFFE ID
+	FetchBundles(ctx context.Context, in *SpiffeID, opts ...grpc.CallOption) (*Bundles, error)
+	// Fetch all bundles the workload is entitled to
+	FetchAllBundles(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Bundles, error)
 }
 
 type workloadClient struct {
@@ -246,18 +176,18 @@ func NewWorkloadClient(cc *grpc.ClientConn) WorkloadClient {
 	return &workloadClient{cc}
 }
 
-func (c *workloadClient) FetchBundles(ctx context.Context, in *SpiffeId, opts ...grpc.CallOption) (*Bundles, error) {
+func (c *workloadClient) FetchBundles(ctx context.Context, in *SpiffeID, opts ...grpc.CallOption) (*Bundles, error) {
 	out := new(Bundles)
-	err := grpc.Invoke(ctx, "/workload.Workload/FetchBundles", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/spire.api.workload.Workload/FetchBundles", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *workloadClient) FetchAllBundles(ctx context.Context, in *common.Empty, opts ...grpc.CallOption) (*Bundles, error) {
+func (c *workloadClient) FetchAllBundles(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*Bundles, error) {
 	out := new(Bundles)
-	err := grpc.Invoke(ctx, "/workload.Workload/FetchAllBundles", in, out, c.cc, opts...)
+	err := grpc.Invoke(ctx, "/spire.api.workload.Workload/FetchAllBundles", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -267,12 +197,10 @@ func (c *workloadClient) FetchAllBundles(ctx context.Context, in *common.Empty, 
 // Server API for Workload service
 
 type WorkloadServer interface {
-	// /Depending on what the SPIFFEId is associated with,
-	// /it requests SVID and cert bundle of the control plane corresponding to the SPIFFEId
-	// /or requests trusted external CA cert bundles corresponding to the SPIFFEId.
-	FetchBundles(context.Context, *SpiffeId) (*Bundles, error)
-	// /Requests all SVIDs and cert bundle of the control plane and all trusted external CA cert bundles associated with the workload.
-	FetchAllBundles(context.Context, *common.Empty) (*Bundles, error)
+	// Fetch bundles for the SVID with the given SPIFFE ID
+	FetchBundles(context.Context, *SpiffeID) (*Bundles, error)
+	// Fetch all bundles the workload is entitled to
+	FetchAllBundles(context.Context, *Empty) (*Bundles, error)
 }
 
 func RegisterWorkloadServer(s *grpc.Server, srv WorkloadServer) {
@@ -280,7 +208,7 @@ func RegisterWorkloadServer(s *grpc.Server, srv WorkloadServer) {
 }
 
 func _Workload_FetchBundles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SpiffeId)
+	in := new(SpiffeID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -289,16 +217,16 @@ func _Workload_FetchBundles_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/workload.Workload/FetchBundles",
+		FullMethod: "/spire.api.workload.Workload/FetchBundles",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkloadServer).FetchBundles(ctx, req.(*SpiffeId))
+		return srv.(WorkloadServer).FetchBundles(ctx, req.(*SpiffeID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _Workload_FetchAllBundles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(common.Empty)
+	in := new(Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -307,16 +235,16 @@ func _Workload_FetchAllBundles_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/workload.Workload/FetchAllBundles",
+		FullMethod: "/spire.api.workload.Workload/FetchAllBundles",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WorkloadServer).FetchAllBundles(ctx, req.(*common.Empty))
+		return srv.(WorkloadServer).FetchAllBundles(ctx, req.(*Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 var _Workload_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "workload.Workload",
+	ServiceName: "spire.api.workload.Workload",
 	HandlerType: (*WorkloadServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -335,29 +263,27 @@ var _Workload_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("workload.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 375 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x52, 0x41, 0x6f, 0xa2, 0x40,
-	0x14, 0x5e, 0x40, 0x77, 0xf1, 0xad, 0xba, 0x38, 0x71, 0xb3, 0x84, 0xbd, 0x18, 0x4f, 0x5c, 0x84,
-	0x8d, 0x66, 0x93, 0xcd, 0x1e, 0x9a, 0xb4, 0x8d, 0x26, 0x4d, 0x2f, 0x86, 0x1e, 0x9a, 0xb4, 0x07,
-	0x82, 0xcc, 0xa0, 0xc4, 0x81, 0x21, 0x30, 0x62, 0xf8, 0x71, 0xfd, 0x6f, 0x0d, 0x03, 0xa3, 0xb1,
-	0xb1, 0xa7, 0x79, 0xf3, 0xbd, 0xef, 0x7b, 0x6f, 0xbe, 0x37, 0x0f, 0x86, 0x47, 0x96, 0xef, 0x29,
-	0x0b, 0xb0, 0x93, 0xe5, 0x8c, 0x33, 0xa4, 0xcb, 0xbb, 0x35, 0xdb, 0xc6, 0x7c, 0x77, 0xd8, 0x38,
-	0x21, 0x4b, 0xdc, 0x22, 0x8b, 0xa3, 0x88, 0xb8, 0x45, 0x1e, 0xbb, 0xd9, 0x7e, 0xeb, 0x86, 0x2c,
-	0x49, 0x58, 0xda, 0x1e, 0x8d, 0x70, 0xfa, 0xa6, 0xc2, 0xe0, 0xb9, 0xd5, 0x2e, 0x53, 0x9e, 0x57,
-	0xe8, 0x37, 0xf4, 0x1a, 0x9d, 0x1f, 0x63, 0x53, 0x99, 0x28, 0x76, 0xcf, 0xd3, 0x1b, 0xe0, 0x01,
-	0x23, 0x04, 0x9d, 0xa2, 0x8c, 0xb1, 0xa9, 0x4e, 0x14, 0xbb, 0xef, 0x89, 0x18, 0xd9, 0x60, 0xd4,
-	0xa7, 0x9f, 0xe5, 0x71, 0x19, 0x70, 0xe2, 0xef, 0x49, 0x65, 0x6a, 0x22, 0x3f, 0xac, 0xf1, 0x75,
-	0x03, 0x3f, 0x92, 0x0a, 0xfd, 0x81, 0x71, 0xc8, 0x52, 0x9e, 0x33, 0xea, 0x67, 0x34, 0x48, 0x89,
-	0xbf, 0x39, 0xa4, 0x98, 0x12, 0xb3, 0x23, 0xd8, 0xa8, 0xcd, 0xad, 0xeb, 0xd4, 0x9d, 0xc8, 0xa0,
-	0x17, 0x18, 0x45, 0x04, 0x93, 0x3c, 0xe0, 0x04, 0xb7, 0xec, 0xc2, 0xec, 0x4e, 0x34, 0xfb, 0xfb,
-	0x7c, 0xe6, 0x9c, 0x66, 0x70, 0x61, 0xc0, 0x59, 0x49, 0x41, 0x53, 0xa3, 0x10, 0xa8, 0x67, 0x44,
-	0x1f, 0x60, 0xeb, 0x1e, 0x7e, 0x5e, 0xa5, 0x22, 0x03, 0xb4, 0xda, 0x43, 0xe3, 0xbd, 0x0e, 0xd1,
-	0x18, 0xba, 0x65, 0x40, 0x0f, 0xa4, 0xf5, 0xdd, 0x5c, 0xfe, 0xab, 0xff, 0x94, 0xa9, 0x05, 0xfa,
-	0x93, 0x1c, 0xce, 0x10, 0xd4, 0xd3, 0xc8, 0xd4, 0x18, 0x4f, 0x5f, 0xe1, 0x5b, 0x5b, 0x17, 0xdd,
-	0x9c, 0x7f, 0xcc, 0x27, 0x75, 0x13, 0x53, 0x11, 0x26, 0x7e, 0x7d, 0x62, 0xc2, 0x1b, 0x1c, 0x2f,
-	0x3e, 0xc5, 0x00, 0x8d, 0x73, 0x2a, 0xda, 0x77, 0xbd, 0x3a, 0x9c, 0x97, 0xa0, 0x4b, 0x05, 0xfa,
-	0x0b, 0xfd, 0x15, 0xe1, 0xe1, 0x4e, 0x76, 0x43, 0xe7, 0xaa, 0xf2, 0x71, 0xd6, 0xe8, 0x8c, 0x49,
-	0xda, 0x02, 0x7e, 0x08, 0xd9, 0x2d, 0xa5, 0x12, 0x1a, 0x38, 0xed, 0x76, 0x2c, 0x93, 0x8c, 0x57,
-	0x57, 0x44, 0xeb, 0x2f, 0x9b, 0xaf, 0x62, 0x73, 0x16, 0xef, 0x01, 0x00, 0x00, 0xff, 0xff, 0xca,
-	0xc1, 0x76, 0xce, 0x84, 0x02, 0x00, 0x00,
+	// 345 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x52, 0x41, 0x4f, 0xf2, 0x40,
+	0x14, 0x4c, 0x0b, 0xfd, 0x28, 0x0f, 0x3e, 0xc4, 0x17, 0x4d, 0x2a, 0x98, 0x88, 0x3d, 0xf5, 0xd4,
+	0x03, 0x1e, 0x34, 0x7a, 0x12, 0x85, 0x84, 0x78, 0x31, 0xf5, 0xa0, 0xf1, 0x42, 0x8a, 0xbb, 0x8d,
+	0x1b, 0x2a, 0x6d, 0xb6, 0x0b, 0xa6, 0xff, 0xc6, 0x5f, 0xe1, 0xef, 0x33, 0xbb, 0xdb, 0x35, 0x51,
+	0x1b, 0x3d, 0x75, 0x3a, 0x6f, 0xde, 0xcb, 0xcc, 0xb4, 0xd0, 0x7b, 0xcd, 0xf8, 0x2a, 0xcd, 0x62,
+	0x12, 0xe6, 0x3c, 0x13, 0x19, 0x62, 0x91, 0x33, 0x4e, 0xc3, 0x38, 0x67, 0xa1, 0x99, 0xf8, 0x0f,
+	0xd0, 0x9a, 0x6c, 0xd6, 0x24, 0xa5, 0x05, 0x5e, 0x40, 0x6b, 0xa9, 0xa1, 0x67, 0x8d, 0x1a, 0x41,
+	0x67, 0x7c, 0x1c, 0xfe, 0x5c, 0x08, 0xef, 0x2b, 0x30, 0x5d, 0x0b, 0x5e, 0x46, 0x66, 0x03, 0xfb,
+	0xd0, 0x10, 0x22, 0xf5, 0xec, 0x91, 0x15, 0x38, 0x91, 0x84, 0xfe, 0xbb, 0x0d, 0xff, 0xbf, 0x88,
+	0x71, 0x08, 0xed, 0x22, 0x67, 0x49, 0x42, 0x17, 0x8c, 0x78, 0xd6, 0xc8, 0x0a, 0xda, 0x91, 0xab,
+	0x89, 0x39, 0x41, 0x84, 0x66, 0xb1, 0x65, 0x44, 0x5d, 0xe8, 0x46, 0x0a, 0x63, 0x00, 0x7d, 0xf9,
+	0x5c, 0xe4, 0x9c, 0x6d, 0x63, 0x41, 0x17, 0x2b, 0x5a, 0x7a, 0x0d, 0x35, 0xef, 0x49, 0xfe, 0x56,
+	0xd3, 0x37, 0xb4, 0xc4, 0x23, 0xe8, 0x28, 0xa5, 0xb6, 0xe3, 0x35, 0x95, 0x08, 0x24, 0xa5, 0xd3,
+	0x21, 0x81, 0xdd, 0x84, 0x12, 0xca, 0x63, 0x41, 0x8d, 0xaa, 0xf0, 0x1c, 0x15, 0xf3, 0xf4, 0xcf,
+	0x98, 0xe1, 0xcc, 0xac, 0x56, 0x5d, 0xe9, 0xf0, 0xfd, 0xe4, 0x1b, 0x3d, 0xb8, 0x82, 0xfd, 0x5a,
+	0xa9, 0xac, 0x47, 0x9a, 0xd7, 0xa1, 0x25, 0xc4, 0x3d, 0x70, 0xb6, 0x71, 0xba, 0xa1, 0x55, 0x60,
+	0xfd, 0x72, 0x6e, 0x9f, 0x59, 0xfe, 0x00, 0xdc, 0x3b, 0xdd, 0xca, 0x35, 0xf6, 0xc0, 0xfe, 0xec,
+	0xca, 0x66, 0xc4, 0x6f, 0x81, 0x33, 0x7d, 0xc9, 0x45, 0x39, 0x7e, 0xb3, 0xc0, 0x35, 0x1e, 0x71,
+	0x0e, 0xdd, 0x19, 0x15, 0x4f, 0xcf, 0xe6, 0x4b, 0x1e, 0xd6, 0x25, 0x32, 0x37, 0x07, 0xc3, 0xba,
+	0xa9, 0x59, 0x9d, 0xc3, 0x8e, 0x3a, 0x75, 0x99, 0xa6, 0x86, 0x3a, 0xa8, 0xd3, 0x2b, 0x17, 0xbf,
+	0x9e, 0x9a, 0xc0, 0xa3, 0x6b, 0xb8, 0xe5, 0x3f, 0xf5, 0x07, 0x9e, 0x7c, 0x04, 0x00, 0x00, 0xff,
+	0xff, 0xf4, 0xb1, 0x0c, 0xd1, 0x93, 0x02, 0x00, 0x00,
 }
