@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 SPIRE_REPO ?= spiffe/spire
-SPIRE_REF  ?= 6d40066b8f0d06329f5b38c2c4320812478eb5ef # branch, tag or commit hash
+SPIRE_REF  ?= 19012a353c0cb58706564d987c9ace25e5826eb5 # branch, tag or commit hash
 
 all: checkout build-artifact build-services
 
