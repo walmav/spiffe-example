@@ -11,16 +11,16 @@ RUN apt-get install -y openssl
 # Setup user accounts
 #--------------------
 RUN addgroup spire && \
-    adduser -u 1001 -S -G spire spire
+    adduser --uid 1101 --disabled-password --shell /bin/bash --ingroup spire spire
 
 RUN addgroup blog && \
-    adduser -u 1011 -S -G blog blog
+    adduser --uid 1111 --disabled-password --shell /bin/bash --ingroup blog blog
 
 
 COPY conf /cmd/spire-agent/.conf
 COPY pconf /plugin/agent/.conf
-COPY artifact.tgz /
-COPY ghostunnel /root/
+COPY .artifact/artifact.tgz /
+COPY .artifact/ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifact.tgz
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
@@ -36,7 +36,7 @@ WORKDIR /cmd/spire-agent/
 
 # Create a vault user and group first so the IDs are the same
 RUN addgroup vault && \
-    adduser -u 1010 -S -G vault vault
+    adduser --uid 1010 --disabled-password --shell /bin/bash --ingroup vault vault
 
 
 RUN mkdir -p /vault/logs && \

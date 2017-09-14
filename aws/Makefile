@@ -4,7 +4,7 @@ SPIRE_REF  ?= master
 
 AWS_DOMAIN   ?= s3.us-east-2.amazonaws.com
 SPIRE_HASH   ?= ef3ce96
-SPIRE_OS     ?= linux-x86-64
+SPIRE_OS     ?= linux-x86_64
 ART_DIR      ?= .artifacts
 SPIRE_ART    ?= $(ART_DIR)/artifacts.tgz
 GHOST_ART   ?= $(ART_DIR)/ghostunnel
@@ -22,25 +22,22 @@ checkout:
 
 build-artifact:
 	echo "BUILD-ARTIFACT"
-	rm -rf blog/${ART_DIR}
-	rm -rf database/${ART_DIR}
-	rm -rf spire/${ART_DIR}
-	mkdir blog/${ART_DIR}
-	mkdir database/${ART_DIR}
-	mkdir spire/${ART_DIR}
+	rm -rf {spire,blog,database}/$(ART_DIR)
+	mkdir  {spire,blog,database}/$(ART_DIR)
 	docker-compose build build
 	docker-compose up -d build
 	docker-compose exec build cp /root/go/bin/ghostunnel /home/artifacts
 	docker-compose stop build
-	cp $(SPIRE_ART) spire/${ART_DIR}
-	cp $(SPIRE_ART) blog/${ART_DIR}
-	cp $(SPIRE_ART) database/${ART_DIR}
-	cp $(GHOST_ART) blog/${ART_DIR}
-	cp $(GHOST_ART) database/${ART_DIR}
-	docker-compose build blog 
+	cp $(SPIRE_ART) spire/${ART_DIR}/
+	cp $(SPIRE_ART) blog/${ART_DIR}/
+	cp $(SPIRE_ART) database/${ART_DIR}/
+	cp $(GHOST_ART) blog/${ART_DIR}/
+	cp $(GHOST_ART) database/${ART_DIR}/
+
 
 build-services:
 	echo "BUILD-SERVICES"
+	docker-compose build blog
 
 demo:
 	echo "DEMO"
