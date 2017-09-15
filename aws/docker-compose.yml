@@ -10,11 +10,10 @@ services:
         args:
           - SPIRE_GOOPTS=${SPIRE_GOOPTS}
           - DEBUG=${DEBUG}
-
       hostname: build
       tty: true
       volumes:
-        - .artifacts:/home/artifacts
+        - .:/home/aws
 
    harness:
       privileged: true
@@ -24,7 +23,7 @@ services:
       tty: true
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-        - .artifacts:/home/artifacts
+        - .:/home/aws
 
    blog:
       container_name: blog
@@ -39,13 +38,15 @@ services:
       build: database
       hostname: database
       tty: true
+      ports:
+        - 3306:3306
       volumes:
         - .:/home/aws
-        - "./mariadb:/var/lib/mysql:rw"
+        - "./.mariadb:/var/lib/mysql:rw"
       environment:
         - "MYSQL_DATABASE=forum_db"
         - "MYSQL_USER=forum_db_user"
-        - "MYSQL_PASWORD=forum_db_user_pass"
+        - "MYSQL_PASSWORD=forum_db_user_pass"
         - "MYSQL_ROOT_PASSWORD=db_root_pass"
 
    spire:

@@ -1,7 +1,7 @@
 FROM ubuntu:xenial
 
-LABEL Description="Certificate Rotation SPIFFE: Blog"
-LABEL vendor="SPIFFE"
+LABEL Description="SPIRE Demo: Blog"
+LABEL vendor="scytale.io"
 LABEL version="0.1.0"
 
 RUN apt-get update -y
@@ -10,19 +10,23 @@ RUN apt-get install -y openssl
 #====================
 # Setup user accounts
 #--------------------
-RUN addgroup spire && \
+RUN addgroup --gid 101 spire && \
     adduser --uid 1101 --disabled-password --shell /bin/bash --ingroup spire spire
 
-RUN addgroup blog && \
+RUN addgroup --gid 110 blog && \
     adduser --uid 1111 --disabled-password --shell /bin/bash --ingroup blog blog
 
 
+
+WORKDIR /home/aws
+
 COPY conf /cmd/spire-agent/.conf
 COPY pconf /plugin/agent/.conf
-COPY .artifact/artifact.tgz /
-COPY .artifact/ghostunnel /root/
+COPY .artifacts/artifacts.tgz /
+COPY .artifacts/ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
-RUN tar --directory / -xvzf /artifact.tgz
+RUN tar --directory / -xvzf /artifacts.tgz
+
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
 WORKDIR /cmd/spire-agent/
 
@@ -35,7 +39,7 @@ WORKDIR /cmd/spire-agent/
 #--------------------
 
 # Create a vault user and group first so the IDs are the same
-RUN addgroup vault && \
+RUN addgroup --gid 120 vault && \
     adduser --uid 1010 --disabled-password --shell /bin/bash --ingroup vault vault
 
 

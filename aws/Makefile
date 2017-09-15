@@ -37,10 +37,17 @@ build-artifact:
 
 build-services:
 	echo "BUILD-SERVICES"
+	rm -rf .mariadb
+	mkdir  .mariadb
 	docker-compose build blog
+	docker-compose build database
+	docker-compose build harness 
 
 demo:
 	echo "DEMO"
+	docker compose up -d spire
+	sleep 5 
+	docker-compose up -d blog database harness 
 
 clean:
 	docker-compose down
