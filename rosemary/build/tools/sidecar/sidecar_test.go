@@ -1,21 +1,18 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"net"
-	"net/http"
 	"os"
 	"testing"
 	"time"
 
 	workload "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
 )
 
 const (
-	testPort        = 22222
 	testTimeSeconds = 20
 	testTTL         = 10
 )
@@ -31,18 +28,19 @@ func TestSidecar_Integration(t *testing.T) {
 	}
 	defer os.RemoveAll(tmpdir)
 
-	config = &SidecarConfig{
-		AgentURL:      fmt.Sprintf("http://localhost:%d", testPort),
-		CertDir:       tmpdir,
+	config := &SidecarConfig{
 		GhostunnelCmd: "echo",
+		CertDir:       tmpdir,
 	}
-
-	startWebServer(testPort)
 
 	fmt.Printf("Will test for %d seconds.\n", testTimeSeconds)
 	go sendInterrupt(testTimeSeconds)
 
-	err = daemon()
+	workloadClient := MockWorkloadClient{}
+
+	sidecar := NewSidecar(config, workloadClient)
+
+	err = sidecar.RunDaemon()
 	if err != nil {
 		panic(err)
 	}
@@ -61,25 +59,6 @@ func sendInterrupt(seconds int) {
 	}
 }
 
-func serveBundles(w http.ResponseWriter, r *http.Request) {
-	bundlesToServe := &workload.Bundles{
-		Ttl: testTTL,
-		Bundles: []*workload.WorkloadEntry{
-			&workload.WorkloadEntry{
-				SpiffeId:         "localhost/id",
-				Svid:             readFile("keys/svid.pem"),
-				SvidPrivateKey:   readFile("keys/svid_pk.pem"),
-				SvidBundle:       readFile("keys/bundle.pem"),
-				FederatedBundles: nil,
-			},
-		},
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	result, _ := json.Marshal(bundlesToServe)
-	io.WriteString(w, string(result))
-}
-
 func readFile(file string) (bytes []byte) {
 	bytes, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -88,11 +67,26 @@ func readFile(file string) (bytes []byte) {
 	return
 }
 
-func startWebServer(port int32) {
-	http.HandleFunc(fetchAllBundlesSuffix, serveBundles)
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
-	if err != nil {
-		panic(err)
+type MockWorkloadClient struct {
+}
+
+func (m MockWorkloadClient) FetchAllBundles(ctx context.Context, in *workload.Empty, opts ...grpc.CallOption) (bundles *workload.Bundles, err error) {
+	bundles = &workload.Bundles{
+		Ttl: testTTL,
+		Bundles: []*workload.WorkloadEntry{
+			&workload.WorkloadEntry{
+				SpiffeId:         "example.org/id",
+				Svid:             readFile("keys/svid.pem"),
+				SvidPrivateKey:   readFile("keys/svid_pk.pem"),
+				SvidBundle:       readFile("keys/bundle.pem"),
+				FederatedBundles: nil,
+			},
+		},
 	}
-	go http.Serve(listener, nil)
+	err = nil
+	return
+}
+
+func (m MockWorkloadClient) FetchBundles(ctx context.Context, in *workload.SpiffeID, opts ...grpc.CallOption) (*workload.Bundles, error) {
+	panic("Not implemented")
 }

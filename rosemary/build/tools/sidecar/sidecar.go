@@ -1,53 +1,36 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"os/exec"
 	"os/signal"
 	"syscall"
 	"time"
 
-	workload "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi"      //github.com/spiffe/sri/pkg/api/workload"
-	common "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi/common" //github.com/spiffe/sri/pkg/common"
+	workload "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi" //github.com/spiffe/sri/pkg/api/workload"
 )
 
-const (
-	fetchAllBundlesSuffix = "/fetchAllBundles"
-	configFile            = "sidecar_config.hcl"
-)
+// Sidecar is the component that consumes Workload API and renews certs
+type Sidecar struct {
+	config         *SidecarConfig
+	workloadClient workload.WorkloadClient
+	processRunning bool
+	process        *os.Process
+}
 
-var (
-	config     *SidecarConfig
-	ghostunnel *exec.Cmd
-)
-
-func main() {
-	// 0. Load configuration (other endpoint address)
-	// 1. Request certs using Workload API
-	// 2. Put cert on disk
-	// 3. Start ghostunnel if not running, otherwise send SIGUSR1 to reload cert
-	// 4. Wait until TTL expires
-	// 5. Goto 1
-
-	config, err := ParseConfig(configFile)
-	if err != nil {
-		panic(err)
-	}
-	log("Sidecar is up! Will use agent at %s\n\n", config.AgentURL)
-
-	err = daemon()
-	if err != nil {
-		panic(err)
+// NewSidecar creates a new sidecar
+func NewSidecar(config *SidecarConfig, workloadClient workload.WorkloadClient) *Sidecar {
+	return &Sidecar{
+		config:         config,
+		workloadClient: workloadClient,
 	}
 }
 
-func daemon() error {
+// RunDaemon starts the main loop
+func (s *Sidecar) RunDaemon() error {
 	// Create channel for interrupt signal
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, syscall.SIGINT, syscall.SIGTERM)
@@ -55,11 +38,11 @@ func daemon() error {
 	// Main loop
 	for {
 		// Fetch and dump certificates
-		pk, crt, ttl, err := dumpBundles()
+		pk, crt, ttl, err := s.dumpBundles()
 		if err != nil {
 			return err
 		}
-		err = signalGhostunnel(pk, crt)
+		err = s.signalProcess(pk, crt)
 		if err != nil {
 			return err
 		}
@@ -80,20 +63,23 @@ func daemon() error {
 	}
 }
 
-func signalGhostunnel(pk, crt string) (err error) {
-	if ghostunnel == nil || ghostunnel.ProcessState.Exited() {
+func (s *Sidecar) signalProcess(pk, crt string) (err error) {
+	// TODO: generalize this for any process, not just Ghostunnel
+	if !s.processRunning {
 		// Start Ghostunnel
-		args := fmt.Sprintf("%s --keystore %s --cacert %s", config.GhostunnelArgs, pk, crt)
-		ghostunnel := exec.Command(config.GhostunnelCmd, args)
-		ghostunnel.Stdout = os.Stdout
-		ghostunnel.Stderr = os.Stderr
-		err = ghostunnel.Start()
+		args := fmt.Sprintf("%s --keystore %s --cacert %s", s.config.GhostunnelArgs, pk, crt)
+		cmd := exec.Command(s.config.GhostunnelCmd, args)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Start()
 		if err != nil {
 			return
 		}
+		s.process = cmd.Process
+		go s.checkProcessExit()
 	} else {
 		// Signal Ghostunnel to reload certs
-		err = ghostunnel.Process.Signal(syscall.SIGUSR1)
+		err = s.process.Signal(syscall.SIGUSR1)
 		if err != nil {
 			return
 		}
@@ -102,8 +88,14 @@ func signalGhostunnel(pk, crt string) (err error) {
 	return
 }
 
-func dumpBundles() (pk, crt string, ttl int32, err error) {
-	bundles, err := fetchBundles()
+func (s *Sidecar) checkProcessExit() {
+	s.processRunning = true
+	s.process.Wait()
+	s.processRunning = false
+}
+
+func (s *Sidecar) dumpBundles() (pk, crt string, ttl int32, err error) {
+	bundles, err := s.workloadClient.FetchAllBundles(nil, &workload.Empty{})
 	if err != nil {
 		return
 	}
@@ -117,8 +109,8 @@ func dumpBundles() (pk, crt string, ttl int32, err error) {
 
 	log("Writing %d bundles!\n", len(bundles.Bundles))
 	for index, bundle := range bundles.Bundles {
-		pkFilename := fmt.Sprintf("%s/%d.key", config.CertDir, index)
-		certFilename := fmt.Sprintf("%s/%d.cert", config.CertDir, index)
+		pkFilename := fmt.Sprintf("%s/%d.key", s.config.CertDir, index)
+		certFilename := fmt.Sprintf("%s/%d.cert", s.config.CertDir, index)
 		if index == 0 {
 			pk = pkFilename
 			crt = certFilename
@@ -137,40 +129,6 @@ func dumpBundles() (pk, crt string, ttl int32, err error) {
 			return
 		}
 	}
-	return
-}
-
-func fetchBundles() (bundles *workload.Bundles, err error) {
-	reqStr, err := json.Marshal(&common.Empty{})
-	if err != nil {
-		return
-	}
-	log("Invoking FetchAllBundles\n")
-
-	req, err := http.NewRequest("GET", config.AgentURL+fetchAllBundlesSuffix, bytes.NewBuffer(reqStr))
-	if err != nil {
-		return
-	}
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	respStr, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-	log("FetchAllBundles returned\n")
-
-	err = json.Unmarshal([]byte(respStr), &bundles)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
