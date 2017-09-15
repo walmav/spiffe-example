@@ -10,10 +10,10 @@ RUN apt-get install -y openssl
 #====================
 # Setup user accounts
 #--------------------
-RUN addgroup --gid 101 spire && \
+RUN addgroup --gid 1901 spire && \
     adduser --uid 1101 --disabled-password --shell /bin/bash --ingroup spire spire
 
-RUN addgroup --gid 110 blog && \
+RUN addgroup --gid 1910 blog && \
     adduser --uid 1111 --disabled-password --shell /bin/bash --ingroup blog blog
 
 
@@ -28,11 +28,31 @@ COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifacts.tgz
 
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
-WORKDIR /cmd/spire-agent/
 
 
 
 
+#====================
+# Setup Python
+#--------------------
+RUN apt-get -y install \
+    make \
+    wget \
+    python \
+    git
+
+RUN \
+   cd && \
+   wget https://bootstrap.pypa.io/get-pip.py && \
+   python get-pip.py && \
+   rm get-pip.py
+
+RUN \
+  git clone https://github.com/sh4nks/flaskbb.git && \
+  cd flaskbb &&\
+  pip install -r requirements.txt
+
+EXPOSE 8080
 
 #====================
 # Vault setup: Eventually move to its own container
@@ -49,14 +69,16 @@ RUN mkdir -p /vault/logs && \
 # TODO
 
 
-
 # Expose the logs directory
-VOLUME /valut/logs
+VOLUME /vault/logs
 
 # Expose the file directory
 VOLUME /vault/file
 
 
-
+#================
+# Final setup
+#----------------
+WORKDIR /cmd/spire-agent/
 
 # CMD ./spire-agent run
