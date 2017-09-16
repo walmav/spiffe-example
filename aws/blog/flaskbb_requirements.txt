@@ -1,4 +1,4 @@
 
-
-pymysql
 gunicorn
+setuptools
+mysql-python

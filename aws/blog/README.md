@@ -7,5 +7,9 @@
 
 ```bash
 make install 
-flaskbb --config /cmd/spire-agent/flaskbb/flaskbb.cfg run --host 0.0.0.0 --port 8080
+
+# Development Mode
+flaskbb --config /home/flaskbb/flaskbb.cfg run --host 0.0.0.0 --port 8080
+
+flaskbb --config /home/flaskbb/flaskbb.cfg start  --host 0.0.0.0 --port 8080
 ```

@@ -29,30 +29,39 @@ RUN tar --directory / -xvzf /artifacts.tgz
 
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
 
-
-
-
 #====================
 # Setup Python
 #--------------------
 RUN apt-get -y install \
     make \
     wget \
+    build-essential \
     python \
+    python-dev \
+    libmysqlclient-dev \
     git
 
 RUN \
-   cd && \
+   cd /home/ && \
    wget https://bootstrap.pypa.io/get-pip.py && \
    python get-pip.py && \
    rm get-pip.py
 
 RUN \
+  cd /home/ && \
   git clone https://github.com/sh4nks/flaskbb.git && \
   cd flaskbb &&\
   pip install -r requirements.txt
 
+COPY flaskbb_requirements.txt /home/flaskbb/
+COPY flaskbb.cfg /home/flaskbb/
+
+RUN cd /home/flaskbb &&\
+    pip install -r flaskbb_requirements.txt
+
+
 EXPOSE 8080
+
 
 #====================
 # Vault setup: Eventually move to its own container
