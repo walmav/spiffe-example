@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -10,22 +11,25 @@ import (
 	"syscall"
 	"time"
 
-	workload "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi" //github.com/spiffe/sri/pkg/api/workload"
+	workload "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi"
+	//workload "github.com/spiffe/spire/pkg/api/workload"
 )
 
 // Sidecar is the component that consumes Workload API and renews certs
 type Sidecar struct {
-	config         *SidecarConfig
-	workloadClient workload.WorkloadClient
-	processRunning bool
-	process        *os.Process
+	config                *SidecarConfig
+	workloadClient        workload.WorkloadClient
+	workloadClientContext context.Context
+	processRunning        bool
+	process               *os.Process
 }
 
 // NewSidecar creates a new sidecar
-func NewSidecar(config *SidecarConfig, workloadClient workload.WorkloadClient) *Sidecar {
+func NewSidecar(workloadClientContext context.Context, config *SidecarConfig, workloadClient workload.WorkloadClient) *Sidecar {
 	return &Sidecar{
-		config:         config,
-		workloadClient: workloadClient,
+		workloadClientContext: workloadClientContext,
+		config:                config,
+		workloadClient:        workloadClient,
 	}
 }
 
@@ -95,7 +99,7 @@ func (s *Sidecar) checkProcessExit() {
 }
 
 func (s *Sidecar) dumpBundles() (pk, crt string, ttl int32, err error) {
-	bundles, err := s.workloadClient.FetchAllBundles(nil, &workload.Empty{})
+	bundles, err := s.workloadClient.FetchAllBundles(s.workloadClientContext, &workload.Empty{})
 	if err != nil {
 		return
 	}

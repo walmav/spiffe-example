@@ -8,6 +8,7 @@ import (
 	"time"
 
 	workload "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi"
+	//workload "github.com/spiffe/spire/pkg/api/workload"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -38,7 +39,7 @@ func TestSidecar_Integration(t *testing.T) {
 
 	workloadClient := MockWorkloadClient{}
 
-	sidecar := NewSidecar(config, workloadClient)
+	sidecar := NewSidecar(nil, config, workloadClient)
 
 	err = sidecar.RunDaemon()
 	if err != nil {

@@ -15,10 +15,12 @@ RUN apt-get install -y git curl unzip build-essential
 
 ENV GOPATH=/root/go
 
-# Build SRI
+# Build Spire
 COPY repos/spire /root/go/src/github.com/spiffe/spire
 WORKDIR /root/go/src/github.com/spiffe/spire/
-RUN ./build.sh all
+RUN ./build.sh setup
+RUN ./build.sh vendor
+RUN ./build.sh binaries
 RUN ./build.sh artifact
 
 # Build tools

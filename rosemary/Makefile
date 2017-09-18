@@ -1,6 +1,6 @@
 SHELL=/bin/bash
-SPIRE_REPO ?= spiffe/spire
-SPIRE_REF  ?= 961f3ab9a361707f074ede3f1d0ed434e38d20f1 # branch, tag or commit hash
+SPIRE_REPO ?= evan2645/sri
+SPIRE_REF  ?= agent-workload-api # branch, tag or commit hash
 
 all: checkout build-artifact build-services
 
@@ -32,7 +32,6 @@ build-artifact:
 	cp build/repos/spire/plugin/server/upstreamca-memory/pkg/_test_data/keys/* spire/upstreamca-memory-keys/
 	
 build-services:
-	rm -f build/repos/spire/plugin/server/.conf/join_token.hcl # TODO: this file is breaking server, remove it
 	rm -rf {spire,blog,database}/{conf,pconf}
 	mkdir {spire,blog,database}/{conf,pconf}
 	cp build/repos/spire/cmd/spire-server/.conf/* spire/conf/
