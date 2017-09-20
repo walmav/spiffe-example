@@ -35,6 +35,7 @@ services:
       volumes:
         - .:/home/aws
 
+   # TODO: figure out how to have all trafic proxy via port
    database:
       container_name: database
       build: database
@@ -42,6 +43,7 @@ services:
       tty: true
       ports:
         - 3306:3306
+        - 6306:6306
       volumes:
         - .:/home/aws
         - "./.mariadb:/var/lib/mysql:rw"

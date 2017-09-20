@@ -4,7 +4,12 @@
 set -x
 URI="$1"
 if [ "$URI" = "" ]; then
-    URI="spiffe://blog.dev.acme.com/path/service"
+    URI="spiffe://blog.example.org/path/service"
 fi
 
-ghostunnel server --listen database:8002 --target localhost:8001 --keystore /keys/server.key.pem --cacert /keys/ca-chain.cert.pem --allow-uri-san $URI
+ghostunnel server \
+    --listen database:6306 \
+    --target localhost:3306 \
+    --keystore /keys/server.key.pem \
+    --cacert /keys/ca-chain.cert.pem \
+    --allow-uri-san $URI

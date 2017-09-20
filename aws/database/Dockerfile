@@ -24,6 +24,9 @@ COPY pconf /plugin/agent/.conf
 COPY .artifacts/artifacts.tgz /
 COPY .artifacts/ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
+
+
+
 RUN tar --directory / -xvzf /artifacts.tgz
 
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
@@ -31,7 +34,21 @@ ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
 WORKDIR /cmd/spire-agent/
 
 
+#====================
+# Setup ghostunnel
+#--------------------
+
+COPY /keys/ /keys/
+
+RUN mkdir /home/ghostunnel
+
+COPY /keys/ /keys/
+COPY ghostunnel_server.sh /home/ghostunnel/
+COPY .artifacts/ghostunnel /home/ghostunnel/
 
 
+
+EXPOSE 3306
+EXPOSE 6306
 
 # CMD ./spire-agent run

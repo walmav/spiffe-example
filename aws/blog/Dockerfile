@@ -23,14 +23,14 @@ WORKDIR /home/aws
 COPY conf /cmd/spire-agent/.conf
 COPY pconf /plugin/agent/.conf
 COPY .artifacts/artifacts.tgz /
-COPY .artifacts/ghostunnel /root/
+
 COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifacts.tgz
 
 ENV SPIRE_PLUGIN_CONFIG_DIR=/pconf
 
 #====================
-# Setup Python
+# Setup Python and FlaskBB
 #--------------------
 RUN apt-get -y install \
     make \
@@ -62,6 +62,14 @@ RUN cd /home/flaskbb &&\
 
 EXPOSE 8080
 
+#====================
+# Setup Ghostunnel
+#--------------------
+RUN mkdir /home/ghostunnel
+
+COPY /keys/ /keys/
+COPY ghostunnel_client.sh /home/ghostunnel/
+COPY .artifacts/ghostunnel /home/ghostunnel/
 
 #====================
 # Vault setup: Eventually move to its own container
