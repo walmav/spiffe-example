@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -72,7 +73,7 @@ func (s *Sidecar) signalProcess(pk, crt string) (err error) {
 	if !s.processRunning {
 		// Start Ghostunnel
 		args := fmt.Sprintf("%s --keystore %s --cacert %s", s.config.GhostunnelArgs, pk, crt)
-		cmd := exec.Command(s.config.GhostunnelCmd, args)
+		cmd := exec.Command(s.config.GhostunnelCmd, strings.Split(args, " ")...)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
 		err = cmd.Start()
@@ -98,6 +99,35 @@ func (s *Sidecar) checkProcessExit() {
 	s.processRunning = false
 }
 
+func convertToPem(format string, in []byte) (out []byte, err error) {
+	// TODO: Use Golang library to make this conversion
+	fin, err := ioutil.TempFile("", "")
+	if err != nil {
+		return
+	}
+	defer os.Remove(fin.Name())
+	fin.Write(in)
+	fin.Close()
+
+	fout, err := ioutil.TempFile("", "")
+	if err != nil {
+		return
+	}
+	defer os.Remove(fout.Name())
+	fin.Close()
+
+	cmd := exec.Command("openssl", format, "-inform", "der", "-in", fin.Name(), "-out", fout.Name())
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Start()
+	if err != nil {
+		return
+	}
+	cmd.Wait()
+	out, err = ioutil.ReadFile(fout.Name())
+	return
+}
+
 func (s *Sidecar) dumpBundles() (pk, crt string, ttl int32, err error) {
 	bundles, err := s.workloadClient.FetchAllBundles(s.workloadClientContext, &workload.Empty{})
 	if err != nil {
@@ -121,14 +151,27 @@ func (s *Sidecar) dumpBundles() (pk, crt string, ttl int32, err error) {
 		}
 
 		log("Writing keystore #%d...\n", index+1)
-		keystore := append(bundle.SvidPrivateKey, bundle.Svid...)
+		var svidPrivateKey, svid, svidBundle []byte
+		svidPrivateKey, err = convertToPem("ec", bundle.SvidPrivateKey)
+		if err != nil {
+			return
+		}
+		svid, err = convertToPem("x509", bundle.Svid)
+		if err != nil {
+			return
+		}
+		keystore := append(svidPrivateKey, svid...)
 		err = ioutil.WriteFile(pkFilename, keystore, os.ModePerm)
 		if err != nil {
 			return
 		}
 
 		log("Writing CA certs #%d...\n", index+1)
-		err = ioutil.WriteFile(certFilename, bundle.SvidBundle, os.ModePerm)
+		svidBundle, err = convertToPem("x509", bundle.SvidBundle)
+		if err != nil {
+			return
+		}
+		err = ioutil.WriteFile(certFilename, svidBundle, os.ModePerm)
 		if err != nil {
 			return
 		}

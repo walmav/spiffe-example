@@ -1,6 +1,6 @@
 SHELL=/bin/bash
-SPIRE_REPO ?= evan2645/sri
-SPIRE_REF  ?= agent-workload-api # branch, tag or commit hash
+SPIRE_REPO ?= kunzimariano/sri
+SPIRE_REF  ?= list_selector_entries # branch, tag or commit hash
 
 all: checkout build-artifact build-services
 
@@ -51,6 +51,7 @@ build-services:
 demo:
 	docker-compose up -d spire
 	sleep 5 # TODO: Find another way of making sure server is up before agents
+	docker-compose exec spire bash -c 'cd /home/rosemary/artifact/ && ./registration'
 	docker-compose up -d blog database harness
 	docker-compose exec blog cp /home/rosemary/artifact/sidecar /sidecar/sidecar
 	docker-compose exec database cp /home/rosemary/artifact/sidecar /sidecar/sidecar

@@ -15,9 +15,11 @@ COPY sidecar_config.hcl /sidecar/
 RUN tar --directory / -xvzf /artifact.tgz
 WORKDIR /spire/
 
-RUN useradd -ms /bin/bash database
-RUN chown -R database /spire /sidecar
-USER database
+RUN addgroup spire && \
+   adduser --uid 1111 --disabled-password --shell /bin/bash --ingroup spire spire
+
+RUN chown -R spire /spire /sidecar
+USER spire
 
 CMD ./spire-agent run
 

@@ -1,3 +1,4 @@
 agentAddress = "/spire/spire_api"
-ghostunnelCmd = "ghostunnel client --listen localhost:8003 --target database:8002"
-certDir = "certs"
+ghostunnelCmd = "/home/rosemary/artifact/ghostunnel"
+ghostunnelArgs = "client --listen localhost:8003 --target database:8002"
+certDir = "/sidecar"

@@ -3,53 +3,23 @@
         {
             "selectors": [
                 {
-                    "type": "Token",
-                    "value": "TokenBlog"
+                    "type": "unix",
+                    "value": "uid:1111"
                 }
             ],
-            "spiffe_id": "spiffe://localhost/spiffe/node-id/TokenBlog",
-            "parent_id": "spiffe://localhost/spiffe/cp",
+            "spiffe_id": "spiffe://example.org/Blog",
+            "parent_id": "spiffe://example.org/spiffe/node-id/TokenBlog",
             "ttl": 200
         },
         {
             "selectors": [
                 {
-                    "type": "Token",
-                    "value": "TokenDatabase"
+                    "type": "unix",
+                    "value": "uid:1111"
                 }
             ],
-            "spiffe_id": "spiffe://localhost/spiffe/node-id/TokenDatabase",
-            "parent_id": "spiffe://localhost/spiffe/cp",
-            "ttl": 200
-        },
-        {
-            "selectors": [
-                {
-                    "type": "hash",
-                    "value": "hashstring"
-                },
-                {
-                    "type": "uid",
-                    "value": "1001"
-                }
-            ],
-            "spiffe_id": "spiffe://localhost/Blog",
-            "parent_id": "spiffe://localhost/spiffe/node-id/TokenBlog",
-            "ttl": 200
-        },
-        {
-            "selectors": [
-                {
-                    "type": "hash",
-                    "value": "hashstring"
-                },
-                {
-                    "type": "uid",
-                    "value": "1001"
-                }
-            ],
-            "spiffe_id": "spiffe://localhost/Database",
-            "parent_id": "spiffe://localhost/spiffe/node-id/TokenDatabase",
+            "spiffe_id": "spiffe://example.org/Database",
+            "parent_id": "spiffe://example.org/spiffe/node-id/TokenDatabase",
             "ttl": 200
         }
     ]

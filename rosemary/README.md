@@ -29,24 +29,12 @@ One container has a [Spire Server](https://github.com/spiffe/sri/tree/master/cmd
 
 ### Registration Entries
 
-#### Nodes registration entries
-
-There is one entry per node. In both cases there is a single selector of type 'Token', and the parent is the Control Plane.
-
-| Selectors | SPIFFE ID | PARENT ID |
-| :------ | :----- | :----------- |
-| Token/TokenBlog  |  spiffe://localhost/spiffe/node-id/TokenBlog | spiffe://localhost/spiffe/cp |  
-| Token/TokenDatabase | spiffe://localhost/spiffe/node-id/TokenDatabase | spiffe://localhost/spiffe/cp |  
-
-
-#### Workloads registration entries
-
 There is also one entry per workload. In both cases there are two selectors: type 'hash' and 'uid', and the parent is its corresponding node.
 
 | Selectors | SPIFFE ID | PARENT ID |
 | :------ | :----- | :----------- |
-| hash/hashstring, uid/1001  | spiffe://localhost/Blog  | spiffe://localhost/spiffe/node-id/TokenBlog |  
-| hash/hashstring, uid/1001  | spiffe://localhost/Database   | spiffe://localhost/spiffe/node-id/TokenDatabase |  
+| unix/uid:1111  | spiffe://example.org/Blog  | spiffe://example.org/spiffe/node-id/TokenBlog |  
+| unix/uid:1111  | spiffe://example.org/Database   | spiffe://example.org/spiffe/node-id/TokenDatabase |  
 
 
 ## Details
@@ -76,14 +64,15 @@ These are the steps to run the demo:
 2. Change to 'rosemary/' directory and run 'make'
 - This will build the containers and it usually takes several minutes
 3. Run 'make demo'
-- This will open tmuxinator with 7 panes: 3 pairs of daemon and daemon log panes (one pair for SPIRE Server
+- This will open tmuxinator with 7 panes: 3 pairs of CLI and daemon log panes (one pair for SPIRE Server
 and two pairs for the SPIRE Agents) and one pane for the main console (aka harness)
-- The 3 daemons will be already running on one side, and on the other side you can see the logs for each daemon
-4. To run commands against one of the daemons run 'docker-compose exec {blog,database,spire} bash' in the main/harness console and then run the command
+- The 3 daemons will be already running on each container
+- On the left panes you can see the logs for each daemon
+4. Use the right panes to run commands
 - The daemon CLI is './spire-agent' for SPIRE Agent and './spire-server' for SPIRE server
 - Run the daemon CLI without arguments to see the valid options
-5. In the main/harness console you can run the registration process
-- Change to 'artifact/' and run './registration'
-6. To see the SVID generated for the nodes you need to run the following command in its container: 'openssl x509 -in base_svid.crt -noout -text'
-6. To exit tmuxinator press 'Ctrl+B' then '&' and confirm with 'Y'
-7. To stop the containers run 'make clean'
+5. To see the SVID generated for the nodes you need to run the following command in its container: 'openssl x509 -in base_svid.crt -noout -text'
+6. You can run the sidecar in one of the agent containers
+- Change to directory '/sidecar' and then run './sidecar'
+7. To exit tmuxinator press 'Ctrl+B' then '&' and confirm with 'Y'
+8. To stop the containers run 'make clean'

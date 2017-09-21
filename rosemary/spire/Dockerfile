@@ -11,7 +11,9 @@ COPY upstreamca-memory-keys /spire/keys
 RUN tar --directory / -xvzf /artifact.tgz
 WORKDIR /spire/
 
-RUN useradd -ms /bin/bash server
+RUN addgroup server && \
+   adduser --uid 1111 --disabled-password --shell /bin/bash --ingroup server server
+
 RUN chown -R server /spire
 USER server
 
