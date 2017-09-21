@@ -63,16 +63,19 @@ These are the steps to run the demo:
 1. Clone this repo
 2. Change to 'rosemary/' directory and run 'make'
 - This will build the containers and it usually takes several minutes
-3. Run 'make demo'
-- This will open tmuxinator with 7 panes: 3 pairs of CLI and daemon log panes (one pair for SPIRE Server
-and two pairs for the SPIRE Agents) and one pane for the main console (aka harness)
-- The 3 daemons will be already running on each container
-- On the left panes you can see the logs for each daemon
-4. Use the right panes to run commands
+3. Run 'make demo' and it will open tmuxinator with 7 panes
+- From top to bottom:
+- Blog (Agent) CLI | Blog sidecar
+- Database (Agent) CLI | Database sidecar
+- Server CLI | Server logs
+- Main console (aka harness)
+4. Use the right panes (CLI) to run commands
 - The daemon CLI is './spire-agent' for SPIRE Agent and './spire-server' for SPIRE server
 - Run the daemon CLI without arguments to see the valid options
-5. To see the SVID generated for the nodes you need to run the following command in its container: 'openssl x509 -in base_svid.crt -noout -text'
-6. You can run the sidecar in one of the agent containers
-- Change to directory '/sidecar' and then run './sidecar'
+5. To see the SVID generated for the agents you need to run the following command in its container: 'openssl x509 -in base_svid.crt -noout -text'
+6. You can run netcat in the agents CLI to simulate the workloads
+- In Database CLI run './nc.sh'
+- In Blog CLI run './nc.sh'
+- You should be able to type text in one of the nc instances and see the echo in the other after pressing Enter key
 7. To exit tmuxinator press 'Ctrl+B' then '&' and confirm with 'Y'
 8. To stop the containers run 'make clean'
