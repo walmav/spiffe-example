@@ -5,7 +5,7 @@ LABEL vendor="SPIFFE"
 LABEL version="0.1.0"
 
 RUN apt-get update -y
-RUN apt-get install -y openssl
+RUN apt-get install -y openssl netcat
 
 COPY conf /spire/.conf
 COPY pconf /spire/plugin/agent/.conf
