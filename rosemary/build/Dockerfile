@@ -31,6 +31,6 @@ RUN ./build.sh all
 # Build ghosttunnel
 ENV GOROOT=/root/go/src/github.com/spiffe/spire/.build-linux-x86_64
 ENV PATH=${GOROOT}/bin:${PATH}
-RUN git -C /root/go/src/github.com/spiffe/ clone -b require-any-client-cert https://github.com/spiffe/ghostunnel.git
+RUN git -C /root/go/src/github.com/spiffe/ clone -b tls-config-with-go-spiffe https://github.com/spiffe/ghostunnel.git
 WORKDIR /root/go/src/github.com/spiffe/ghostunnel
 RUN go install
