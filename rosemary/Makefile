@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 SPIRE_REPO ?= spiffe/spire
-SPIRE_REF  ?= 961f3ab9a361707f074ede3f1d0ed434e38d20f1 # branch, tag or commit hash
+SPIRE_REF  ?= a9f732b235e834e862882d4d330206be408d8063 # branch, tag or commit hash
 
 all: checkout build-artifact build-services
 
@@ -32,7 +32,6 @@ build-artifact:
 	cp build/repos/spire/plugin/server/upstreamca-memory/pkg/_test_data/keys/* spire/upstreamca-memory-keys/
 	
 build-services:
-	rm -f build/repos/spire/plugin/server/.conf/join_token.hcl # TODO: this file is breaking server, remove it
 	rm -rf {spire,blog,database}/{conf,pconf}
 	mkdir {spire,blog,database}/{conf,pconf}
 	cp build/repos/spire/cmd/spire-server/.conf/* spire/conf/
@@ -52,6 +51,7 @@ build-services:
 demo:
 	docker-compose up -d spire
 	sleep 5 # TODO: Find another way of making sure server is up before agents
+	docker-compose exec spire bash -c 'cd /home/rosemary/artifact/ && ./registration'
 	docker-compose up -d blog database harness
 	docker-compose exec blog cp /home/rosemary/artifact/sidecar /sidecar/sidecar
 	docker-compose exec database cp /home/rosemary/artifact/sidecar /sidecar/sidecar

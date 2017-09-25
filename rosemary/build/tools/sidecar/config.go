@@ -10,7 +10,7 @@ import (
 type SidecarConfig struct {
 	AgentAddress   string `hcl:"agentAddress"`
 	GhostunnelCmd  string `hcl:"ghostunnelCmd"`
-	GhostunnelArgs string `hcl:"ghostunnelCmd"`
+	GhostunnelArgs string `hcl:"ghostunnelArgs"`
 	CertDir        string `hcl:"certDir"`
 }
 

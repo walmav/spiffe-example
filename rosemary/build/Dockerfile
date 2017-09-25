@@ -15,10 +15,12 @@ RUN apt-get install -y git curl unzip build-essential
 
 ENV GOPATH=/root/go
 
-# Build SRI
+# Build Spire
 COPY repos/spire /root/go/src/github.com/spiffe/spire
 WORKDIR /root/go/src/github.com/spiffe/spire/
-RUN ./build.sh all
+RUN ./build.sh setup
+RUN ./build.sh vendor
+RUN ./build.sh binaries
 RUN ./build.sh artifact
 
 # Build tools
@@ -29,5 +31,6 @@ RUN ./build.sh all
 # Build ghosttunnel
 ENV GOROOT=/root/go/src/github.com/spiffe/spire/.build-linux-x86_64
 ENV PATH=${GOROOT}/bin:${PATH}
-RUN go get -v github.com/spiffe/ghostunnel
-
+RUN git -C /root/go/src/github.com/spiffe/ clone -b tls-config-with-go-spiffe https://github.com/spiffe/ghostunnel.git
+WORKDIR /root/go/src/github.com/spiffe/ghostunnel
+RUN go install

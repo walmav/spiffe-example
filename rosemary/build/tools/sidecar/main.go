@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"net"
+	"time"
 
 	workload "github.com/spiffe/spiffe-example/rosemary/build/tools/sidecar/wlapi"
 	"google.golang.org/grpc"
@@ -25,12 +27,13 @@ func main() {
 	}
 	log("Sidecar is up! Will use agent at %s\n\n", config.AgentAddress)
 
-	workloadClient, err := createGrpcClient(config)
+	workloadClient, ctx, cancel, err := createGrpcClient(config)
+	defer cancel()
 	if err != nil {
 		panic(err)
 	}
 
-	sidecar := NewSidecar(config, workloadClient)
+	sidecar := NewSidecar(ctx, config, workloadClient)
 
 	err = sidecar.RunDaemon()
 	if err != nil {
@@ -38,15 +41,15 @@ func main() {
 	}
 }
 
-func createGrpcClient(config *SidecarConfig) (workloadClient workload.WorkloadClient, err error) {
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
+func createGrpcClient(config *SidecarConfig) (workloadClient workload.WorkloadClient, ctx context.Context, cancel context.CancelFunc, err error) {
+	ctx = context.Background()
+	ctx, cancel = context.WithCancel(ctx)
 
-	opt := grpc.WithInsecure()
-	opts := []grpc.DialOption{opt}
-
-	conn, err := grpc.Dial(config.AgentAddress, opts...)
+	conn, err := grpc.Dial(config.AgentAddress,
+		grpc.WithInsecure(),
+		grpc.WithDialer(func(addr string, timeout time.Duration) (net.Conn, error) {
+			return net.DialTimeout("unix", addr, timeout)
+		}))
 
 	workloadClient = workload.NewWorkloadClient(conn)
 
