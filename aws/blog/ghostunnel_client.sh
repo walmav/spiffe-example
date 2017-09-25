@@ -7,7 +7,7 @@ if [ "$URI" = "" ]; then
     URI="spiffe://blog.example.org/path/service"
 fi
 
-ghostunnel client \
+/home/ghostunnel/ghostunnel client \
    --listen 0.0.0.0:3306 \
    --target database:3306 \
    --keystore /keys/client.key.pem \

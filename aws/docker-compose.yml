@@ -30,6 +30,10 @@ services:
       build: blog
       hostname: blog
       tty: true
+      environment:
+        - MYSQL_USER
+        - MYSQL_PASSWORD
+        - MYSQL_DATABASE
       ports:
         - 8080:8080
       volumes:
@@ -48,10 +52,10 @@ services:
         - .:/home/aws
         - "./.mariadb:/var/lib/mysql:rw"
       environment:
-        - "MYSQL_DATABASE=forum_db"
-        - "MYSQL_USER=forum_db_user"
-        - "MYSQL_PASSWORD=forum_db_user_pass"
-        - "MYSQL_ROOT_PASSWORD=db_root_pass"
+        - "MYSQL_DATABASE=${MYSQL_DATABASE}"
+        - "MYSQL_USER=${MYSQL_USER}"
+        - "MYSQL_PASSWORD=${MYSQL_PASSWORD}"
+        - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
 
    spire:
       container_name: spire

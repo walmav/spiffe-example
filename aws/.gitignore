@@ -1,4 +1,4 @@
 *artifacts.tgz
 *ghostunel
 *.artifacts*
-*.mariadb*
+.env

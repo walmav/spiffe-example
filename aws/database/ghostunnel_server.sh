@@ -4,10 +4,10 @@
 set -x
 URI="$1"
 if [ "$URI" = "" ]; then
-    URI="spiffe://blog.example.org/path/service"
+    URI="spiffe://blog.dev.example.org/path/service"
 fi
 
-ghostunnel server \
+/home/ghostunnel/ghostunnel server \
     --listen database:6306 \
     --target localhost:3306 \
     --keystore /keys/server.key.pem \
