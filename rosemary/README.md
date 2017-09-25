@@ -1,8 +1,10 @@
-#  Certificate Rotation Demo
+#  Workload Attestation Demo
 
 This demo shows two workloads communicating over Ghostunnel using generated SVID. A SPIRE deployment takes care of the 
-node and workload attestation. After attestation has been established, the Workload sidecar will perform certificate rotation 
-for the workload SVIDs at a configured TTL interval.
+node and workload attestation.
+
+## Video Recording
+ [SPIRE Rosemary Demo](https://youtu.be/G59eflh1U7Y)
 
 ## Components
 
