@@ -25,4 +25,3 @@ export KUBECONFIG=/home/ubuntu/.kube/config
 
 kubectl apply --filename=/vagrant/flannel.yml
 	
-
