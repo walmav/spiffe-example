@@ -24,4 +24,4 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 export KUBECONFIG=/home/ubuntu/.kube/config
 
 kubectl apply --filename=/vagrant/flannel.yml
-	
+
