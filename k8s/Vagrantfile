@@ -1,26 +1,105 @@
+# vi:syntax=ruby
+
+$kubernetes_version = "1.7.5"
+
+$master_ip = "10.90.0.10"
+$master_name = "k8s-master"
+$master_ram = 2048
+
+$node_num = 2
+$node_ip = "10.90.0.100"
+$node_name = "k8s-node"
+$node_ram = 1024
+
+$node_ip_abc = $node_ip.split('.')[0..2].join('.') + '.'
+$node_ip_d = $node_ip.split('.')[3].to_i - 1
+$node_ips = $node_num.times.collect { |n| $node_ip_abc + "#{$node_ip_d+n+1}" }
+
+$setup_all = <<_SCRIPT
+set -x
+cat <<_EOF | sudo tee /etc/hosts
+$1 $2
+127.0.0.1 localhost
+_EOF
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+	sudo apt-key add -
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
+	sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get update
+sudo apt-get install -y \
+	kubelet=#{$kubernetes_version}-00 \
+	kubeadm=#{$kubernetes_version}-00 \
+	kubectl=#{$kubernetes_version}-00
+sudo apt-get install -y docker.io
+_SCRIPT
+
+$setup_master = <<_SCRIPT
+#{$setup_all}
+
+sudo kubeadm init \
+	--kubernetes-version=v#{$kubernetes_version} \
+	--pod-network-cidr=10.244.0.0/16 \
+	--token=nogood.choiceforasecret \
+	--apiserver-advertise-address=#{$master_ip}
+
+mkdir /home/ubuntu/.kube
+sudo cp /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
+sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
+
+# allow pods to be scheduled on the master
+#kubectl taint nodes --all node-role.kubernetes.io/master-
+
+export KUBECONFIG=/home/ubuntu/.kube/config
+
+kubectl apply --filename=/vagrant/flannel.yaml
+kubectl apply --filename=/vagrant/dashboard.yaml
+_SCRIPT
+
+$setup_node = <<_SCRIPT
+#{$setup_all}
+
+sudo kubeadm join \
+	--token=nogood.choiceforasecret \
+	#{$master_ip}:6443
+_SCRIPT
 
 Vagrant.configure("2") do |config|
-
 	config.vm.box = "ubuntu/xenial64"
 	config.vm.box_check_update = false
 
 	config.vm.provider :virtualbox do |v|
 		v.check_guest_additions = false
 		v.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
-		v.memory = 2048
 		v.cpus = 1
 	end
 
-	config.vm.define "master" do |c|
-		c.vm.hostname = "k8s-master"
-		c.vm.network "private_network", ip: "10.90.0.10"
-		c.vm.provision "shell", path: "setup-master.sh"
-	end
+	config.vm.define $master_name do |c|
+		c.vm.hostname = $master_name
+		c.vm.network "private_network", ip: $master_ip
+			c.vm.provision "shell" do |s|
+				s.inline = $setup_master
+				s.args   = [$master_ip , $master_name]
+			end
+	    c.vm.provider :virtualbox do |v|
+			v.memory = $master_ram
+		end
+    end
 
-	config.vm.define "node" do |c|
-		c.vm.hostname = "k8s-node"
-		c.vm.network "private_network", ip: "10.90.0.100"
-		c.vm.provision "shell", path: "setup-node.sh"
-	end
+	$node_num.times do |n|
+		vm_name = $node_name + "-#{n+1}"
 
+		config.vm.define vm_name do |c|
+			c.vm.hostname = vm_name
+			c.vm.network "private_network", ip: $node_ips[n]
+			c.vm.provision "shell" do |s|
+				s.inline = $setup_node
+				s.args   = [$node_ips[n] , vm_name]
+			end
+			c.vm.provider :virtualbox do |v|
+				v.memory = $node_ram
+			end
+		end
+	end
 end
