@@ -13,13 +13,13 @@ Vagrant.configure("2") do |config|
 
 	config.vm.define "master" do |c|
 		c.vm.hostname = "k8s-master"
-		c.vm.network "private_network", ip: "10.100.0.10"
+		c.vm.network "private_network", ip: "10.90.0.10"
 		c.vm.provision "shell", path: "setup-master.sh"
 	end
 
 	config.vm.define "node" do |c|
 		c.vm.hostname = "k8s-node"
-		c.vm.network "private_network", ip: "10.100.0.100"
+		c.vm.network "private_network", ip: "10.90.0.100"
 		c.vm.provision "shell", path: "setup-node.sh"
 	end
 
