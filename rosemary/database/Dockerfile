@@ -12,7 +12,7 @@ COPY pconf /spire/plugin/agent/.conf
 COPY artifact.tgz /
 COPY ghostunnel /root/
 COPY sidecar_config.hcl /sidecar/
-COPY nc.sh /spire/
+COPY *.sh /spire/
 RUN tar --directory / -xvzf /artifact.tgz
 WORKDIR /spire/
 
