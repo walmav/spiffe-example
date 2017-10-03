@@ -4,9 +4,9 @@ $kubernetes_version = "1.7.5"
 
 $master_ip = "10.90.0.10"
 $master_name = "k8s-master"
-$master_ram = 2048
+$master_ram = 1024
 
-$node_num = 2
+$node_num = 1
 $node_ip = "10.90.0.100"
 $node_name = "k8s-node"
 $node_ram = 1024
@@ -48,13 +48,9 @@ mkdir /home/ubuntu/.kube
 sudo cp /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
 
-# allow pods to be scheduled on the master
-#kubectl taint nodes --all node-role.kubernetes.io/master-
-
 export KUBECONFIG=/home/ubuntu/.kube/config
-
 kubectl apply --filename=/vagrant/flannel.yaml
-kubectl apply --filename=/vagrant/dashboard.yaml
+kubectl apply --filename=/vagrant/registry.yaml
 _SCRIPT
 
 $setup_node = <<_SCRIPT
@@ -77,28 +73,28 @@ Vagrant.configure("2") do |config|
 
 	config.vm.define $master_name do |c|
 		c.vm.hostname = $master_name
-		c.vm.network "private_network", ip: $master_ip
-			c.vm.provision "shell" do |s|
-				s.inline = $setup_master
-				s.args   = [$master_ip , $master_name]
-			end
-	    c.vm.provider :virtualbox do |v|
+		c.vm.provider :virtualbox do |v|
 			v.memory = $master_ram
 		end
-    end
+		c.vm.network "private_network", ip: $master_ip
+		c.vm.provision "shell" do |s|
+			s.inline = $setup_master
+			s.args = [ $master_ip , $master_name ]
+		end
+	end
 
 	$node_num.times do |n|
 		vm_name = $node_name + "-#{n+1}"
 
 		config.vm.define vm_name do |c|
 			c.vm.hostname = vm_name
+			c.vm.provider :virtualbox do |v|
+				v.memory = $node_ram
+			end
 			c.vm.network "private_network", ip: $node_ips[n]
 			c.vm.provision "shell" do |s|
 				s.inline = $setup_node
-				s.args   = [$node_ips[n] , vm_name]
-			end
-			c.vm.provider :virtualbox do |v|
-				v.memory = $node_ram
+				s.args = [ $node_ips[n] , vm_name ]
 			end
 		end
 	end
