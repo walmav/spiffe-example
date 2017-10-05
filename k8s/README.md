@@ -22,9 +22,15 @@ In this directory:
 vagrant up
 ```
 
-This will create a master (2GB RAM) and two nodes (1GB RAM each).
+This will create a master (k8s-master, 10.90.0.10, 1GB RAM) and one
+node (k8s-node-1, 10.90.0.100, 1GB RAM).
 
-The dashboard will be available (unauthenticated) at http://10.90.0.10:30001
+To connect to the cluster VMs with SSH:
+
+```
+vagrant ssh k8s-master
+vagrant ssh k8s-node-1
+```
 
 To copy off the kubectl config needed to remotely manage the cluster:
 
@@ -33,6 +39,14 @@ vagrant ssh-config > $HOME/.ssh/vagrant_ssh_config
 scp -F $HOME/.ssh/vagrant_ssh_config k8s-master:.kube/config /tmp/admin.conf
 KUBECONFIG=/tmp/admin.conf kubectl get all --all-namespaces
 ```
+
+To install the dashboard, run on the master:
+
+```
+kubectl create -f /vagrant/dashboard.yaml
+```
+
+The dashboard will be available (unauthenticated) at http://10.90.0.10:30001
 
 ### Private docker registry:
 

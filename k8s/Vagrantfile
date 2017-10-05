@@ -17,12 +17,11 @@ $node_ips = $node_num.times.collect { |n| $node_ip_abc + "#{$node_ip_d+n+1}" }
 
 $setup_all = <<_SCRIPT
 set -x
+set -e
 cat <<_EOF | sudo tee /etc/hosts
 $1 $2
 127.0.0.1 localhost
 _EOF
-
-usermod --append --groups docker ubuntu
 
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 	sudo apt-key add -
@@ -35,6 +34,8 @@ sudo apt-get install -y \
 	kubeadm=#{$kubernetes_version}-00 \
 	kubectl=#{$kubernetes_version}-00
 sudo apt-get install -y docker.io
+
+sudo usermod --append --groups docker ubuntu
 _SCRIPT
 
 $setup_master = <<_SCRIPT
