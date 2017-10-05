@@ -39,7 +39,7 @@ KUBECONFIG=/tmp/admin.conf kubectl get all --all-namespaces
 A private docker registry is available on master and all nodes as
 well as from the host machine on port 80.
 
-From a node or master (as root):
+From a node or master (user ubuntu is in group docker, so no sudo necessary):
 ```
 docker pull alpine
 docker tag $(docker images alpine:latest --format="{{.ID}}") localhost/alpine

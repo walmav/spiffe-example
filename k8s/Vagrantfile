@@ -22,6 +22,8 @@ $1 $2
 127.0.0.1 localhost
 _EOF
 
+usermod --append --groups docker ubuntu
+
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
 	sudo apt-key add -
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | \
