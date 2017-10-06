@@ -4,5 +4,5 @@
 *~
 
 /k8s/admin.conf
-/k8s/.vagrant
-/k8s/*.log
+.vagrant
+*.log

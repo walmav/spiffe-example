@@ -1,0 +1,53 @@
+# vi:syntax=ruby
+
+$db_ip = "10.90.0.20"
+$db_name = "db"
+$db_ram = 512
+
+$setup = <<_SCRIPT
+set -x
+set -e
+cat <<_EOF | sudo tee /etc/hosts
+#{$db_ip} #{$db_name}
+127.0.0.1 localhost
+_EOF
+
+sudo apt-get update
+sudo apt-get install -y \
+	mariadb-server
+
+sudo sed -i 's/127\.0\.0\.1/0\.0\.0\.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
+sudo systemctl restart mysql
+
+cat <<_EOF | sudo mysql
+create user 'dbuser'@'%' identified by 'badpass';
+grant all on *.* to 'dbuser'@'%';
+flush privileges;
+create database forum_db;
+_EOF
+
+cat /vagrant/forum_db.dump | sudo mysql forum_db
+
+_SCRIPT
+
+Vagrant.configure("2") do |config|
+	config.vm.box = "ubuntu/xenial64"
+	config.vm.box_check_update = false
+
+	config.vm.provider :virtualbox do |v|
+		v.check_guest_additions = false
+		v.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+		v.cpus = 1
+	end
+
+	config.vm.define $db_name do |c|
+		c.vm.hostname = $db_name
+		c.vm.provider :virtualbox do |v|
+			v.memory = $db_ram
+		end
+		c.vm.network "private_network", ip: $db_ip
+		c.vm.provision "shell" do |s|
+			s.inline = $setup
+		end
+	end
+end
