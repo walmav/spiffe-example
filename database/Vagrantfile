@@ -19,15 +19,9 @@ sudo apt-get install -y \
 sudo sed -i 's/127\.0\.0\.1/0\.0\.0\.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 sudo systemctl restart mysql
 
-cat <<_EOF | sudo mysql
-create user 'dbuser'@'%' identified by 'badpass';
-grant all on *.* to 'dbuser'@'%';
-flush privileges;
-create database forum_db;
-_EOF
-
-cat /vagrant/forum_db.dump | sudo mysql forum_db
-
+for n in $(find /extra_mount -name provision_#{$db_name}\*.sh 2>/dev/null); do
+	source $n
+done
 _SCRIPT
 
 Vagrant.configure("2") do |config|
@@ -48,6 +42,9 @@ Vagrant.configure("2") do |config|
 		c.vm.network "private_network", ip: $db_ip
 		c.vm.provision "shell" do |s|
 			s.inline = $setup
+		end
+		if ENV["VM_EXTRA_MOUNT"]
+			c.vm.synced_folder ENV["VM_EXTRA_MOUNT"], "/extra_mount"
 		end
 	end
 end
