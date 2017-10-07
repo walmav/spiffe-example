@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: blog
+  namespace: default
+  labels:
+    k8s-app: blog
+    version: v0
+spec:
+  replicas: 1
+  selector:
+    k8s-app: blog
+    version: v0
+  template:
+    metadata:
+      labels:
+        k8s-app: blog
+        version: v0
+    spec:
+      containers:
+      - name: ghostunnel
+        image: localhost/spiffe/ghostunnel:latest
+        resources:
+          limits:
+            cpu: 50m
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        env:
+        - name: AGENT_SOCKET
+          value: /tmp/spire-socket
+        - name: LISTEN
+          value: 0.0.0.0:3306
+        - name: UPSTREAM
+          value: 10.90.0.20:3306
+        volumeMounts:
+        - name: spire-socket
+          mountPath: /tmp/spire-socket
+        ports:
+        - containerPort: 3306
+          name: ghostunnel
+          protocol: TCP
+      - name: blog
+        image: localhost/spiffe/blog:latest
+        resources:
+          limits:
+            cpu: 50m
+            memory: 100Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        env:
+        - name: BLOG_DATABASE
+          value: 10.90.0.20:3306
+        - name: BLOG_HOST
+          value: 10.90.0.10:30080
+        - name: BLOG_USER
+          value: dbuser
+        - name: BLOG_PASS
+          value: badpass
+        ports:
+        - containerPort: 8080
+          name: blog
+          protocol: TCP
+      volumes:
+      - name: spire-socket
+        hostPath:
+          path: /tmp
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: blog
+  namespace: default
+  labels:
+    k8s-app: blog
+spec:
+  selector:
+    k8s-app: blog
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30080
+

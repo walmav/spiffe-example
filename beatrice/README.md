@@ -11,6 +11,8 @@ Within the Kubernetes cluster, the spire-agent and spire-server are deployed as 
 
 Both Ghostunnel processes are managed by the SPIRE Sidecar, which implements calls out to the Workload API, writing of certificates to the filesystem, and signaling Ghostunnel when a new certificate is available.
 
+The blog will be available at http://10.90.0.10:30080/
+
 ![Beatrice Diagram](doc/beatrice_diagram.png)
 
 ## Creating the demo
