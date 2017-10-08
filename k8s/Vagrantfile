@@ -44,13 +44,14 @@ _SCRIPT
 $setup_master = <<_SCRIPT
 #{$setup_all}
 
+sudo kubeadm reset || true
 sudo kubeadm init \
 	--kubernetes-version=v#{$kubernetes_version} \
 	--pod-network-cidr=10.244.0.0/16 \
 	--token=nogood.choiceforasecret \
 	--apiserver-advertise-address=#{$master_ip}
 
-mkdir /home/ubuntu/.kube
+mkdir -p /home/ubuntu/.kube
 sudo cp /etc/kubernetes/admin.conf /home/ubuntu/.kube/config
 sudo chown -R ubuntu:ubuntu /home/ubuntu/.kube
 
@@ -66,6 +67,7 @@ _SCRIPT
 $setup_node = <<_SCRIPT
 #{$setup_all}
 
+sudo kubeadm reset || true
 sudo kubeadm join \
 	--token=nogood.choiceforasecret \
 	#{$master_ip}:6443

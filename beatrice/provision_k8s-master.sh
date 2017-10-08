@@ -1,10 +1,21 @@
 #!/bin/bash
 
-docker build -t localhost/spiffe/blog:latest /extra_mount/container_blog
+# wait for registry to become available
+while ! nc -w 1 -z localhost 80; do
+	sleep 1
+done
+
+docker build -t localhost/spiffe/blog:latest /extra_mount/blog/container_blog
 docker push localhost/spiffe/blog
 
-docker build -t localhost/spiffe/ghostunnel:latest /extra_mount/container_ghostunnel
+docker build -t localhost/spiffe/ghostunnel:latest /extra_mount/blog/container_ghostunnel
 docker push localhost/spiffe/ghostunnel
 
-kubectl delete -f /extra_mount/blog.yaml || true
-kubectl create -f /extra_mount/blog.yaml
+kubectl delete -f /extra_mount/blog/blog.yaml || true
+kubectl create -f /extra_mount/blog/blog.yaml
+
+# install and start spire-server
+/extra_mount/install_spire.sh
+sudo cp /extra_mount/systemd/spire-server.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl restart spire-server.service

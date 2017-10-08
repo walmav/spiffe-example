@@ -30,14 +30,14 @@ spec:
             memory: 100Mi
         env:
         - name: AGENT_SOCKET
-          value: /tmp/spire-socket
+          value: /tmp/spire/agent.sock
         - name: LISTEN
           value: 0.0.0.0:3306
         - name: UPSTREAM
           value: 10.90.0.20:3306
         volumeMounts:
         - name: spire-socket
-          mountPath: /tmp/spire-socket
+          mountPath: /tmp/spire
         ports:
         - containerPort: 3306
           name: ghostunnel
