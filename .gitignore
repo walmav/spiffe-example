@@ -3,6 +3,8 @@
 .repos
 *~
 
+.vagrant
+*.log
+
 /k8s/admin.conf
-/k8s/.vagrant
-/k8s/*.log
+/beatrice/blog/container_ghostunnel/ghostunnel

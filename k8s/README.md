@@ -69,6 +69,11 @@ docker push 10.90.0.10/alpine
 
 ## Customizing
 
+Setting `VM_EXTRA_MOUNT` will mount an additional host directory at `/extra_mount`
+
+All scripts in `/extra_mount` named `provision_<hostname>*.sh` will be executed
+at the end of the provisioning process (trailing node number will be removed.)
+
 See Vagrantfile to tweak:
 
 * Kubernetes version (1.7 and 1.6 supported)
