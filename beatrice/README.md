@@ -48,4 +48,10 @@ The following steps can be accomplished with `make build-services`:
 1. On the Database VM, launch spire-agent with the other join token
 1. Deploy the application service to the Kubernetes cluster
 
+## Updating the demo
+
+* SPIRE is installed from a release tgz, update the URL `install_spire.sh`
+* sidecar is also installed from a release tgz, update `blog/container_ghostunnel/Dockerfile`
+* ghostunnel is build from a branch on the forin in the spiffe org, update `install_ghostunnel.sh` 
+
 ## FAQ

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # wait for registry to become available
 while ! nc -w 1 -z localhost 80; do
 	sleep 1
@@ -15,7 +17,4 @@ kubectl delete -f /extra_mount/blog/blog.yaml || true
 kubectl create -f /extra_mount/blog/blog.yaml
 
 # install and start spire-server
-/extra_mount/install_spire.sh
-sudo cp /extra_mount/systemd/spire-server.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl restart spire-server.service
+/extra_mount/install_spire.sh server
