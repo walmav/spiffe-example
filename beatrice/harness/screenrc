@@ -1,0 +1,40 @@
+
+screen -t k8s-master bash -c 'cd ../../k8s && vagrant ssh k8s-master'
+sleep 1 
+screen -t k8s-master bash -c 'cd ../../k8s && vagrant ssh k8s-master'
+screen -t k8s-node bash -c 'cd ../../k8s && vagrant ssh k8s-node-1'
+sleep 1
+screen -t k8s-node bash -c 'cd ../../k8s && vagrant ssh k8s-node-1'
+screen -t db bash -c 'cd ../../database && vagrant ssh db'
+sleep 1
+screen -t db bash -c 'cd ../../database && vagrant ssh db'
+
+mousetrack on
+rendition so wb
+caption string "%n %t"
+
+split -v
+focus right
+split
+focus down
+split
+focus left
+split
+focus up
+split
+focus up
+
+select 0
+focus right
+select 1
+focus down
+select 3
+focus down
+select 5
+focus left
+select 4
+focus up
+select 2
+
+
+

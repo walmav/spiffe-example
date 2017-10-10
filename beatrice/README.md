@@ -21,9 +21,9 @@ Prerequisites:
 
 * Vagrant
 * Virtualbox
-* Docker on the host machine (optional, for tmux-based harness)
+* GNU screen >=4.06 on the host machine (optional, for split-screen demo)
 
-The following steps can be accomplished with `make build-services`:
+The following steps can be accomplished with `make build`:
 
 1. Create the database VM
   1. Deploy spire-agent
@@ -32,12 +32,11 @@ The following steps can be accomplished with `make build-services`:
   1. Deploy spire-agent to the Kubernetes Node VM
   1. Deploy spire-server to the Kubernetes Master VM
   1. Create and register the application containers
-1. Shut down the Vagrant VMs
-1. Create the harness/tmux container
+1. Shut down the Vagrant VMs (`make halt`)
 
 ## Running the demo
 
-(step 1-2 can be accomplished with `make demo`)
+(step 1-2 can be accomplished with `make harness`)
 
 1. Start the Kubernetes and Database VMs
 1. Run the harness container to set up SSH connections to the Kubernetes node and
@@ -53,5 +52,15 @@ The following steps can be accomplished with `make build-services`:
 * SPIRE is installed from a release tgz, update the URL `install_spire.sh`
 * sidecar is also installed from a release tgz, update `blog/container_ghostunnel/Dockerfile`
 * ghostunnel is build from a branch on the forin in the spiffe org, update `install_ghostunnel.sh` 
+
+`make destroy` will halt and wipe all existing VMs
+
+## Reprovisioning the demo
+
+The provision scripts can be manually re-run from within the VMs
+at any time.  They will clean up and re-install all SPIRE and demo
+related configuration.
+
+`make reprovision` will reprovision all VMs
 
 ## FAQ
