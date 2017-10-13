@@ -16,7 +16,6 @@ $node_ip_d = $node_ip.split('.')[3].to_i - 1
 $node_ips = $node_num.times.collect { |n| $node_ip_abc + "#{$node_ip_d+n+1}" }
 
 $setup_all = <<_SCRIPT
-set -x
 set -e
 vm_ip="$1"
 vm_name="$2"
