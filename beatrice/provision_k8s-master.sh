@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 # wait for registry to become available
 while ! nc -w 1 -z localhost 80; do
 	sleep 1

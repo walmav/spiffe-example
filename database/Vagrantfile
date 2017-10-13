@@ -5,7 +5,6 @@ $db_name = "db"
 $db_ram = 512
 
 $setup = <<_SCRIPT
-set -x
 set -e
 cat <<_EOF | sudo tee /etc/hosts
 #{$db_ip} #{$db_name}

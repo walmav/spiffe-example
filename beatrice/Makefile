@@ -23,4 +23,4 @@ harness: build
 	cd harness && make screen
 	cd harness && make kill
 
-.PHONY: build halt destroy harness
+.PHONY: build up halt reprovision destroy harness
