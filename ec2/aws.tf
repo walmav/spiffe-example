@@ -1,21 +1,21 @@
-variable "region" {}
-variable "az" {}
-variable "cidr" {}
-variable "ssh_pub_key" {}
+variable "REGION" {}
+variable "AZ" {}
+variable "CIDR" {}
+variable "SSH_PUB_KEY" {}
 variable "type" { default = "t2.micro" }
-variable "private_ip_blog" { default = "" }
-variable "private_ip_database" { default = "" }
-variable "private_ip_server" { default = "" }
-variable "user_data_blog" { default = "" }
-variable "user_data_server" { default = "" }
-variable "user_data_database" { default = "" }
+variable "PRIVATE_IP_BLOG" { default = "" }
+variable "PRIVATE_IP_DATABASE" { default = "" }
+variable "PRIVATE_IP_SERVER" { default = "" }
+variable "USER_DATA_BLOG" { default = "" }
+variable "USER_DATA_SERVER" { default = "" }
+variable "USER_DATA_DATABASE" { default = "" }
 
 provider "aws" {
-    region = "${var.region}"
+    region = "${var.REGION}"
 }
 
 resource "aws_vpc" "root" {
-	cidr_block = "${var.cidr}"
+	cidr_block = "${var.CIDR}"
 	enable_dns_support = "true"
 	enable_dns_hostnames = "true"
 	tags { Name = "spire_demo vpc" }
@@ -23,8 +23,8 @@ resource "aws_vpc" "root" {
 
 resource "aws_subnet" "public" {
 	vpc_id = "${aws_vpc.root.id}"
-	cidr_block = "${var.cidr}"
-	availability_zone = "${var.region}${var.az}"
+	cidr_block = "${var.CIDR}"
+	availability_zone = "${var.REGION}${var.AZ}"
 	map_public_ip_on_launch = true
 	tags { Name = "spire_demo subnet public" }
 }
@@ -95,7 +95,7 @@ resource "aws_security_group_rule" "egress" {
 
 resource "aws_key_pair" "demo" {
   key_name   = "spire_demo-key"
-  public_key = "${file(var.ssh_pub_key)}"
+  public_key = "${file(var.SSH_PUB_KEY)}"
 }
 
 data "aws_ami" "ubuntu" {
@@ -113,12 +113,12 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_instance" "blog" {
     tags { Name = "spire_demo blog" }
-	private_ip = "${var.private_ip_blog}"
-	user_data = "${var.user_data_blog}"
+	private_ip = "${var.PRIVATE_IP_BLOG}"
+	user_data = "${var.USER_DATA_BLOG}"
 	key_name = "${aws_key_pair.demo.key_name}"
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "${var.type}"
-    availability_zone = "${var.region}${var.az}"
+    availability_zone = "${var.REGION}${var.AZ}"
 	subnet_id = "${aws_subnet.public.id}"
 	vpc_security_group_ids =  [ "${aws_security_group.default.id}" ]
     associate_public_ip_address = true
@@ -126,12 +126,12 @@ resource "aws_instance" "blog" {
 
 resource "aws_instance" "database" {
     tags { Name = "spire_demo database" }
-	private_ip = "${var.private_ip_database}"
-	user_data = "${var.user_data_database}"
+	private_ip = "${var.PRIVATE_IP_DATABASE}"
+	user_data = "${var.USER_DATA_DATABASE}"
 	key_name = "${aws_key_pair.demo.key_name}"
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "${var.type}"
-    availability_zone = "${var.region}${var.az}"
+    availability_zone = "${var.REGION}${var.AZ}"
 	subnet_id = "${aws_subnet.public.id}"
 	vpc_security_group_ids =  [ "${aws_security_group.default.id}" ]
     associate_public_ip_address = true
@@ -139,12 +139,12 @@ resource "aws_instance" "database" {
 
 resource "aws_instance" "server" {
     tags { Name = "spire_demo server" }
-	private_ip = "${var.private_ip_server}"
-	user_data = "${var.user_data_server}"
+	private_ip = "${var.PRIVATE_IP_SERVER}"
+	user_data = "${var.USER_DATA_SERVER}"
 	key_name = "${aws_key_pair.demo.key_name}"
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "${var.type}"
-    availability_zone = "${var.region}${var.az}"
+    availability_zone = "${var.REGION}${var.AZ}"
 	subnet_id = "${aws_subnet.public.id}"
 	vpc_security_group_ids =  [ "${aws_security_group.default.id}" ]
     associate_public_ip_address = true

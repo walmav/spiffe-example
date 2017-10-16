@@ -1,18 +1,18 @@
 #!/bin/bash
 
-declare -rx TF_VAR_region="us-east-2"
-declare -rx TF_VAR_az="a"
-declare -rx TF_VAR_cidr="10.70.0.0/24"
+declare -rx TF_VAR_REGION="us-east-2"
+declare -rx TF_VAR_AZ="a"
+declare -rx TF_VAR_CIDR="10.70.0.0/24"
 
-declare -rx TF_VAR_private_ip_blog="10.70.0.10"
-declare -rx TF_VAR_private_ip_database="10.70.0.20"
-declare -rx TF_VAR_private_ip_server="10.70.0.30"
+declare -rx TF_VAR_PRIVATE_IP_BLOG="10.70.0.10"
+declare -rx TF_VAR_PRIVATE_IP_DATABASE="10.70.0.20"
+declare -rx TF_VAR_PRIVATE_IP_SERVER="10.70.0.30"
 
-declare -rx TF_VAR_ssh_priv_key="demo_ssh_key"
-declare -rx TF_VAR_ssh_pub_key="demo_ssh_key.pub"
+declare -rx TF_VAR_SSH_PRIV_KEY="demo_ssh_key"
+declare -rx TF_VAR_SSH_PUB_KEY="demo_ssh_key.pub"
 
-if [[ ! -r $TF_VAR_ssh_priv_key ]]; then
-	ssh-keygen -N '' -f $TF_VAR_ssh_priv_key
+if [[ ! -r $TF_VAR_SSH_PRIV_KEY ]]; then
+	ssh-keygen -N '' -f $TF_VAR_SSH_PRIV_KEY
 fi
 
 terraform "$@"
