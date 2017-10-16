@@ -13,6 +13,15 @@ declare -rx TF_VAR_SSH_PUB_KEY="demo_ssh_key.pub"
 
 if [[ ! -r $TF_VAR_SSH_PRIV_KEY ]]; then
 	ssh-keygen -N '' -f $TF_VAR_SSH_PRIV_KEY
+	chmo 600 $TF_VAR_SSH_PRIV_KEY
 fi
 
-terraform "$@"
+tf_env() {
+	echo "SSH_PRIV_KEY=$PWD/${TF_VAR_SSH_PRIV_KEY}"
+	terraform output | tr 'a-z' 'A-Z' | sed 's/ //g'
+}
+
+case $1 in
+	env)	tf_env ;;
+	*)		terraform "$@" ;;
+esac
