@@ -2,6 +2,7 @@
 
 ## complicated build of ghostunnel branch on a fork
 
+whoami
 GOLANG_URL=https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz
 GHOSTUNNEL_BRANCH=spiffe-support
 
@@ -16,6 +17,7 @@ if ! which go; then
 	curl --silent $GOLANG_URL | sudo tar --directory /usr/local -xzf -
 fi
 
+rm -rf /home/ubuntu/go
 mkdir -p /home/ubuntu/go/src/github.com/spiffe
 cd /home/ubuntu/go/src/github.com/spiffe
 git clone --branch $GHOSTUNNEL_BRANCH  https://github.com/spiffe/ghostunnel.git
