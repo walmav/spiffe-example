@@ -5,10 +5,10 @@ while ! nc -w 1 -z localhost 80; do
 	sleep 1
 done
 
-docker build -t localhost/spiffe/blog:latest /extra_mount/blog/container_blog
+sudo docker build -t localhost/spiffe/blog:latest /extra_mount/blog/container_blog
 docker push localhost/spiffe/blog
 
-docker build -t localhost/spiffe/ghostunnel:latest /extra_mount/blog/container_ghostunnel
+sudo docker build -t localhost/spiffe/ghostunnel:latest /extra_mount/blog/container_ghostunnel
 docker push localhost/spiffe/ghostunnel
 
 kubectl delete -f /extra_mount/blog/blog.yaml || true
