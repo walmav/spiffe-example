@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 # wipe any exsting DB config
 cat <<_EOF | sudo mysql || true
 drop user 'dbuser'@'%';

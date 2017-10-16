@@ -1,8 +1,9 @@
 #!/bin/bash
 
+set -x
+
 ## complicated build of ghostunnel branch on a fork
 
-whoami
 GOLANG_URL=https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz
 GHOSTUNNEL_BRANCH=spiffe-support
 
