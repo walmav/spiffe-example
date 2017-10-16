@@ -150,6 +150,6 @@ resource "aws_instance" "server" {
     associate_public_ip_address = true
 }
 
-output "ec2_blog_public_ip" { value = "${aws_instance.blog.public_ip}" }
-output "ec2_database_public_ip" { value = "${aws_instance.database.public_ip}" }
-output "ec2_server_public_ip" { value = "${aws_instance.server.public_ip}" }
+output "public_ip_blog" { value = "${aws_instance.blog.public_ip}" }
+output "public_ip_database" { value = "${aws_instance.database.public_ip}" }
+output "public_ip_server" { value = "${aws_instance.server.public_ip}" }
