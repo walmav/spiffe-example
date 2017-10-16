@@ -1,15 +1,17 @@
 #!/bin/bash
 
+set -x
+
 # wait for registry to become available
-while ! nc -w 1 -z localhost 80; do
+while ! curl --silent --fail --output /dev/null localhost; do
 	sleep 1
 done
 
 sudo docker build -t localhost/spiffe/blog:latest /extra_mount/blog/container_blog
-docker push localhost/spiffe/blog
+sudo docker push localhost/spiffe/blog
 
 sudo docker build -t localhost/spiffe/ghostunnel:latest /extra_mount/blog/container_ghostunnel
-docker push localhost/spiffe/ghostunnel
+sudo docker push localhost/spiffe/ghostunnel
 
 kubectl delete -f /extra_mount/blog/blog.yaml || true
 kubectl create -f /extra_mount/blog/blog.yaml
