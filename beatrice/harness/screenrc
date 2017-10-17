@@ -1,13 +1,13 @@
 
-screen -t k8s-master bash -c 'cd ../../k8s && vagrant ssh k8s-master'
+screen -t k8s-master bash -c 'cd ../../vagrant_k8s && vagrant ssh k8s-master'
 sleep 1 
-screen -t k8s-master bash -c 'cd ../../k8s && vagrant ssh k8s-master'
-screen -t k8s-node bash -c 'cd ../../k8s && vagrant ssh k8s-node-1'
+screen -t k8s-master bash -c 'cd ../../vagrant_k8s && vagrant ssh k8s-master'
+screen -t k8s-node bash -c 'cd ../../vagrant_k8s && vagrant ssh k8s-node-1'
 sleep 1
-screen -t k8s-node bash -c 'cd ../../k8s && vagrant ssh k8s-node-1'
-screen -t db bash -c 'cd ../../database && vagrant ssh db'
+screen -t k8s-node bash -c 'cd ../../vagrant_k8s && vagrant ssh k8s-node-1'
+screen -t db bash -c 'cd ../../vagrant_db && vagrant ssh db'
 sleep 1
-screen -t db bash -c 'cd ../../database && vagrant ssh db'
+screen -t db bash -c 'cd ../../vagrant_db && vagrant ssh db'
 
 mousetrack on
 rendition so wb

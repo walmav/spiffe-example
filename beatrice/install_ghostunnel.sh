@@ -10,8 +10,6 @@ GHOSTUNNEL_BRANCH=spiffe-support
 sudo apt-get -y install build-essential libltdl-dev git
 
 export PATH=/usr/local/go/bin:/home/ubuntu/go/bin:$PATH
-# abusing .bash_aliases to ammend PATH, for convenience
-echo "export PATH=/usr/local/go/bin:/home/ubuntu/go/bin:$PATH" > /home/ubuntu/.bash_aliases
 
 # ghostunnel requires golang1.9, so we fetch a tarball
 if ! which go; then
