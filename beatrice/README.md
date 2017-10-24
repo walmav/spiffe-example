@@ -51,7 +51,7 @@ The following steps can be accomplished with `make build`:
 
 * SPIRE is installed from a release tgz, update the URL `install_spire.sh`
 * sidecar is also installed from a release tgz, update `blog/container_ghostunnel/Dockerfile`
-* ghostunnel is build from a branch on the forin in the spiffe org, update `install_ghostunnel.sh` 
+* ghostunnel is built from a branch in the spiffe org, update `install_ghostunnel.sh` 
 
 `make destroy` will halt and wipe all existing VMs
 
