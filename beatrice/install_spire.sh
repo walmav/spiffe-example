@@ -4,7 +4,7 @@ set -x
 
 mode="$1"
 
-SPIRE_TGZ="https://github.com/spiffe/spire/releases/download/0.3pre1/spire-0.3pre1-linux-x86_64-glibc.tgz"
+SPIRE_TGZ="https://github.com/spiffe/spire/releases/download/0.3pre2/spire-0.3pre2-linux-x86_64-glibc.tgz"
 
 sudo rm -rf /opt/spire*
 curl --silent --location $SPIRE_TGZ | sudo tar --directory /opt -xzf -
