@@ -25,3 +25,7 @@ go install
 
 # send a copy to our container friend
 cp /home/ubuntu/go/bin/ghostunnel /extra_mount/blog/container_ghostunnel/
+
+# abusing .bash_aliases to ammend PATH, for convenience
+echo "export PATH=/usr/local/go/bin:/home/ubuntu/go/bin:$PATH" > /home/ubuntu/.bash_aliases
+

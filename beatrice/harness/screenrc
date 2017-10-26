@@ -1,4 +1,6 @@
 
+defscrollback 10000
+
 screen -t k8s-master bash -c './connect.sh vagrant_k8s k8s-master'
 screen -t k8s-master bash -c './connect.sh vagrant_k8s k8s-master'
 screen -t k8s-node bash -c './connect.sh vagrant_k8s k8s-node-1'
