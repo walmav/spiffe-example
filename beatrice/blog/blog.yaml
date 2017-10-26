@@ -34,7 +34,7 @@ spec:
         - name: LISTEN
           value: 0.0.0.0:3306
         - name: UPSTREAM
-          value: 10.90.0.20:3306
+          value: 10.90.0.20:33306
         volumeMounts:
         - name: spire-socket
           mountPath: /tmp/spire

@@ -23,3 +23,6 @@ cat /extra_mount/blog/forum_db.dump | sudo mysql forum_db
 
 # build and install ghostunnel
 /extra_mount/install_ghostunnel.sh
+
+# install sidecar
+/extra_mount/install_sidecar.sh
