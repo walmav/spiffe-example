@@ -9,6 +9,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: blog-sa
+  namespace: blog-ns
 
 ---
 apiVersion: v1
