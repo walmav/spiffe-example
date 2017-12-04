@@ -2,13 +2,12 @@ variable "REGION" {}
 variable "AZ" {}
 variable "CIDR" {}
 variable "SSH_PUB_KEY" {}
+variable "SSH_PRIV_KEY" {}
+variable "PRIVATE_IP_BLOG" {}
+variable "PRIVATE_IP_DATABASE" {}
+variable "PRIVATE_IP_SERVER" {}
+variable "SCRIPT_DIR" {}
 variable "type" { default = "t2.micro" }
-variable "PRIVATE_IP_BLOG" { default = "" }
-variable "PRIVATE_IP_DATABASE" { default = "" }
-variable "PRIVATE_IP_SERVER" { default = "" }
-variable "USER_DATA_BLOG" { default = "" }
-variable "USER_DATA_SERVER" { default = "" }
-variable "USER_DATA_DATABASE" { default = "" }
 
 provider "aws" {
     region = "${var.REGION}"
@@ -102,7 +101,7 @@ data "aws_ami" "ubuntu" {
     most_recent = true
     filter {
         name = "name"
-        values = ["ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-*"]
+        values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
     }
     filter {
         name = "virtualization-type"
@@ -111,45 +110,48 @@ data "aws_ami" "ubuntu" {
     owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "blog" {
-    tags { Name = "spire_demo blog" }
+module "blog" {
+    source = "modules/ec2"
+    name = "spire_demo_blog" 
 	private_ip = "${var.PRIVATE_IP_BLOG}"
-	user_data = "${var.USER_DATA_BLOG}"
+	script_dir = "${var.SCRIPT_DIR}"
 	key_name = "${aws_key_pair.demo.key_name}"
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "${var.type}"
     availability_zone = "${var.REGION}${var.AZ}"
 	subnet_id = "${aws_subnet.public.id}"
 	vpc_security_group_ids =  [ "${aws_security_group.default.id}" ]
-    associate_public_ip_address = true
+	private_key = "${var.SSH_PRIV_KEY}"
 }
 
-resource "aws_instance" "database" {
-    tags { Name = "spire_demo database" }
+module "database" {
+    source = "modules/ec2"
+    name = "spire_demo_database"
 	private_ip = "${var.PRIVATE_IP_DATABASE}"
-	user_data = "${var.USER_DATA_DATABASE}"
+	script_dir = "${var.SCRIPT_DIR}"
 	key_name = "${aws_key_pair.demo.key_name}"
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "${var.type}"
     availability_zone = "${var.REGION}${var.AZ}"
 	subnet_id = "${aws_subnet.public.id}"
 	vpc_security_group_ids =  [ "${aws_security_group.default.id}" ]
-    associate_public_ip_address = true
+	private_key = "${var.SSH_PRIV_KEY}"
 }
 
-resource "aws_instance" "server" {
-    tags { Name = "spire_demo server" }
+module "server" {
+    source = "modules/ec2"
+    name = "spire_demo_server"
 	private_ip = "${var.PRIVATE_IP_SERVER}"
-	user_data = "${var.USER_DATA_SERVER}"
+	script_dir = "${var.SCRIPT_DIR}"
 	key_name = "${aws_key_pair.demo.key_name}"
     ami = "${data.aws_ami.ubuntu.id}"
     instance_type = "${var.type}"
     availability_zone = "${var.REGION}${var.AZ}"
 	subnet_id = "${aws_subnet.public.id}"
 	vpc_security_group_ids =  [ "${aws_security_group.default.id}" ]
-    associate_public_ip_address = true
+	private_key = "${var.SSH_PRIV_KEY}"
 }
 
-output "public_ip_blog" { value = "${aws_instance.blog.public_ip}" }
-output "public_ip_database" { value = "${aws_instance.database.public_ip}" }
-output "public_ip_server" { value = "${aws_instance.server.public_ip}" }
+output "public_ip_blog" { value = "${module.blog.public_ip}" }
+output "public_ip_database" { value = "${module.database.public_ip}" }
+output "public_ip_server" { value = "${module.server.public_ip}" }

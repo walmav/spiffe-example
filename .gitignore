@@ -6,7 +6,7 @@
 .vagrant
 *.log
 
-/k8s/admin.conf
+/vagrant_k8s/admin.conf
 /beatrice/blog/container_ghostunnel/ghostunnel
 
 terraform.tfstate
